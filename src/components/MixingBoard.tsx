@@ -21,6 +21,9 @@ function AccessibleSlider({ id, label, value, baseColor, onChange, disabled = fa
   const [isDragging, setIsDragging] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   
+  // Check if this is the white slider (needs special styling)
+  const isWhiteSlider = baseColor.toUpperCase() === '#FFFFFF';
+  
   // Generate descriptive value text for screen readers
   const getValueText = useCallback((val: number) => {
     if (val === 0) return `${label}: none, 0 percent`;
@@ -96,22 +99,32 @@ function AccessibleSlider({ id, label, value, baseColor, onChange, disabled = fa
       
       {/* Visual track with enhanced feedback */}
       <div className="relative slider-track-container">
-        {/* Background track */}
+        {/* Background track - darker for white slider visibility */}
         <div 
-          className="absolute inset-0 rounded-full bg-white/20 h-3"
+          className={`absolute inset-0 rounded-full h-3 ${
+            isWhiteSlider ? 'bg-gray-500/50' : 'bg-white/20'
+          }`}
           style={{ top: '50%', transform: 'translateY(-50%)' }}
           aria-hidden="true"
         />
         
-        {/* Filled portion */}
+        {/* Filled portion - white slider gets border for visibility */}
         <div 
-          className="absolute h-3 rounded-full transition-all duration-75"
+          className={`absolute h-3 rounded-full transition-all duration-75 ${
+            isWhiteSlider ? 'border-2 border-gray-400' : ''
+          }`}
           style={{ 
             top: '50%',
             transform: 'translateY(-50%)',
             width: `${value}%`,
             backgroundColor: baseColor,
-            boxShadow: isDragging ? `0 0 20px ${baseColor}88` : 'none'
+            boxShadow: isDragging 
+              ? isWhiteSlider 
+                ? '0 0 20px rgba(200, 200, 200, 0.8), inset 0 0 0 1px rgba(0,0,0,0.1)' 
+                : `0 0 20px ${baseColor}88`
+              : isWhiteSlider 
+                ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' 
+                : 'none'
           }}
           aria-hidden="true"
         />
@@ -753,7 +766,7 @@ export default function MixingBoard() {
             className="space-y-4 border-0 p-0 m-0"
           >
             <legend className="sr-only">
-              Color mixing sliders - adjust Red, Yellow, and Blue to match the target color
+              Color mixing sliders - adjust Red, Yellow, Blue, and White to match the target color
             </legend>
             
             {sliders.map((slider, idx) => (

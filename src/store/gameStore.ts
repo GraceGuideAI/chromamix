@@ -65,7 +65,7 @@ interface DailyStats {
   attempts: number;
   bestScore: number;
   completed: boolean;
-  sliderSnapshot?: { red: number; yellow: number; blue: number };
+  sliderSnapshot?: { red: number; yellow: number; blue: number; white?: number };
 }
 
 interface PersistentData {
@@ -217,6 +217,7 @@ const useGameStore = create<GameState>((set, get) => ({
     { id: 'red', label: 'Red', baseColor: '#FF0000', amount: 0 },
     { id: 'yellow', label: 'Yellow', baseColor: '#FFFF00', amount: 0 },
     { id: 'blue', label: 'Blue', baseColor: '#0000FF', amount: 0 },
+    { id: 'white', label: 'White', baseColor: '#FFFFFF', amount: 0 },
   ],
   
   currentMix: '#FFFFFF',
@@ -398,6 +399,7 @@ const useGameStore = create<GameState>((set, get) => ({
         red: state.sliders.find(s => s.id === 'red')?.amount || 0,
         yellow: state.sliders.find(s => s.id === 'yellow')?.amount || 0,
         blue: state.sliders.find(s => s.id === 'blue')?.amount || 0,
+        white: state.sliders.find(s => s.id === 'white')?.amount || 0,
       };
       
       if (score >= 80 && !todayStats.completed) {
@@ -480,6 +482,7 @@ const useGameStore = create<GameState>((set, get) => ({
               { id: 'red', label: 'Red', baseColor: '#FF0000', amount: 0 },
               { id: 'yellow', label: 'Yellow', baseColor: '#FFFF00', amount: 0 },
               { id: 'blue', label: 'Blue', baseColor: '#0000FF', amount: 0 },
+              { id: 'white', label: 'White', baseColor: '#FFFFFF', amount: 0 },
             ],
             currentMix: '#FFFFFF',
             currentScore: 0,
@@ -543,6 +546,7 @@ const useGameStore = create<GameState>((set, get) => ({
         { id: 'red', label: 'Red', baseColor: '#FF0000', amount: 0 },
         { id: 'yellow', label: 'Yellow', baseColor: '#FFFF00', amount: 0 },
         { id: 'blue', label: 'Blue', baseColor: '#0000FF', amount: 0 },
+        { id: 'white', label: 'White', baseColor: '#FFFFFF', amount: 0 },
       ],
       currentMix: '#FFFFFF',
       currentScore: 0,
@@ -566,6 +570,7 @@ const useGameStore = create<GameState>((set, get) => ({
         { id: 'red', label: 'Red', baseColor: '#FF0000', amount: 0 },
         { id: 'yellow', label: 'Yellow', baseColor: '#FFFF00', amount: 0 },
         { id: 'blue', label: 'Blue', baseColor: '#0000FF', amount: 0 },
+        { id: 'white', label: 'White', baseColor: '#FFFFFF', amount: 0 },
       ],
       currentMix: '#FFFFFF',
       currentScore: 0,
