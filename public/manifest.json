@@ -1,26 +1,57 @@
 {
   "name": "ChromaMix - Color Mixing Game",
   "short_name": "ChromaMix",
-  "description": "Mix colors, match targets, master the palette",
+  "description": "Mix colors, match targets, master the palette. A viral color mixing puzzle game.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1e1b4b",
   "theme_color": "#6366f1",
   "orientation": "portrait",
+  "id": "/",
+  "scope": "/",
   "icons": [
     {
       "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "categories": ["games", "entertainment"],
-  "screenshots": []
+  "categories": ["games", "entertainment", "puzzle"],
+  "screenshots": [
+    {
+      "src": "/screenshots/gameplay-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "ChromaMix gameplay on desktop"
+    },
+    {
+      "src": "/screenshots/gameplay-narrow.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "ChromaMix gameplay on mobile"
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": []
 }
