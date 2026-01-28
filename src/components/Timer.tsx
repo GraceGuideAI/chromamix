@@ -20,15 +20,19 @@ export default function Timer({
   const urgency = getTimerUrgency(timeRemaining);
   const colors = getTimerColors(urgency);
   
-  // Format time with leading zeros
+  // Format time with leading zeros - clamp to 0 minimum to prevent negative display
   const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+    const clampedSeconds = Math.max(0, seconds);
+    const mins = Math.floor(clampedSeconds / 60);
+    const secs = clampedSeconds % 60;
     if (mins > 0) {
       return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
     return `${secs}s`;
   };
+  
+  // Clamped time for display
+  const displayTime = Math.max(0, timeRemaining);
 
   return (
     <div className="relative">
@@ -53,7 +57,7 @@ export default function Timer({
           ease: 'easeInOut',
         } : {}}
         role="timer"
-        aria-label={`Time remaining: ${timeRemaining} seconds`}
+        aria-label={`Time remaining: ${displayTime} seconds`}
       >
         {/* Clock Icon */}
         <Clock 
@@ -71,11 +75,11 @@ export default function Timer({
           `}
           aria-hidden="true"
         >
-          {formatTime(timeRemaining)}
+          {formatTime(displayTime)}
         </span>
         
         {/* Screen reader text */}
-        <span className="sr-only">{timeRemaining} seconds remaining</span>
+        <span className="sr-only">{displayTime} seconds remaining</span>
         
         {/* Time Extension Animation */}
         <AnimatePresence>
@@ -128,7 +132,9 @@ export function TimerCompact({
   lastTimeBonus = null,
   showTimeBonus = false,
 }: TimerProps) {
-  const urgency = getTimerUrgency(timeRemaining);
+  // Clamp to 0 minimum to prevent negative display
+  const displayTime = Math.max(0, timeRemaining);
+  const urgency = getTimerUrgency(displayTime);
   const colors = getTimerColors(urgency);
 
   return (
@@ -151,9 +157,9 @@ export function TimerCompact({
           repeat: Infinity,
         } : {}}
         role="timer"
-        aria-label={`${timeRemaining} seconds`}
+        aria-label={`${displayTime} seconds`}
       >
-        {timeRemaining}s
+        {displayTime}s
       </motion.span>
       
       {/* Floating Time Bonus */}

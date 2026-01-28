@@ -4,8 +4,9 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Share2, X, Clock, Zap, Target, Flame } from 'lucide-react';
 import useGameStore, { getScoreLabel, getScoreLabelColor, getTimeUntilNewDaily } from '@/store/gameStore';
-import { getColorName } from '@/utils/colorPhysics';
+import { getColorName, calculateColorScore, type ColorScoreResult } from '@/utils/colorPhysics';
 import { getGameColorName } from '@/data/colors';
+import { ColorFeedback, RGBComparison, ColorDifferenceBar } from './ColorFeedback';
 import confetti from 'canvas-confetti';
 import Timer, { TimeExtensionPopup } from './Timer';
 import ComboDisplay, { ComboAnnouncement, RushStatsBar } from './ComboDisplay';
@@ -204,6 +205,9 @@ export default function MixingBoard() {
     showTimeBonus,
     lastComboTier,
     showComboAnnouncement,
+    // Anti-exploit
+    noMovementWarning,
+    isSubmissionLocked,
     // Daily mode
     dailyAttempts,
     dailyBestScore,
@@ -222,6 +226,9 @@ export default function MixingBoard() {
   // Target color info
   const targetColorName = targetColor.name;
   const targetColorHex = targetColor.hex;
+
+  // Calculate detailed score result for feedback
+  const [scoreResult, setScoreResult] = useState<ColorScoreResult | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [countdown, setCountdown] = useState(getTimeUntilNewDaily());
@@ -340,30 +347,47 @@ export default function MixingBoard() {
   }, [newlyUnlockedAchievement, clearNewAchievement, announce]);
 
   const handleSubmit = () => {
+    // Guard: prevent submission if rush mode game is over
+    if (mode === 'rush' && (!isTimerRunning || timeRemaining <= 0)) {
+      return;
+    }
+    
+    // Calculate detailed score result for better feedback
+    const result = calculateColorScore(currentMix, targetColorHex);
+    setScoreResult(result);
+    
     submitMix();
     
     // Get score after submission for confetti and announcements
     const state = useGameStore.getState();
     const score = typeof state.currentScore === 'number' ? state.currentScore : 0;
     
-    // Announce score
-    const scoreLabel = getScoreLabel(score);
-    announce(`${scoreLabel}! Score: ${score} out of 100`);
+    // Announce score with detailed feedback
+    const feedback = result.feedback;
+    announce(`${feedback.label}! Score: ${score} out of 100. ${feedback.description}${feedback.hint ? ` Hint: ${feedback.hint}` : ''}`);
     
     // Confetti for high scores (respects reduced motion)
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!prefersReducedMotion) {
-      if (score >= 90) {
+      if (score >= 95) {
+        // Perfect match - extra celebration!
         confetti({
-          particleCount: 150,
-          spread: 80,
+          particleCount: 200,
+          spread: 100,
           origin: { y: 0.6 },
           colors: ['#FFD700', '#FFA500', '#FF6347', '#7B68EE', '#00CED1']
         });
-      } else if (score >= 80) {
+      } else if (score >= 85) {
         confetti({
-          particleCount: 80,
-          spread: 60,
+          particleCount: 120,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#4CAF50', '#8BC34A', '#CDDC39']
+        });
+      } else if (score >= 70) {
+        confetti({
+          particleCount: 60,
+          spread: 50,
           origin: { y: 0.6 }
         });
       }
@@ -386,6 +410,7 @@ export default function MixingBoard() {
   };
 
   const handleNewRound = () => {
+    setScoreResult(null); // Clear feedback for new round
     newRound();
     announce('New round started. New target color displayed.');
   };
@@ -401,7 +426,10 @@ export default function MixingBoard() {
 
   const scoreLabel = currentScore > 0 ? getScoreLabel(typeof currentScore === 'number' ? currentScore : 0) : null;
   const scoreLabelColor = scoreLabel ? getScoreLabelColor(scoreLabel) : '';
-  const slidersDisabled = mode === 'rush' && (!isTimerRunning || timeRemaining === 0);
+  // Disable sliders when rush mode game is not actively running
+  const slidersDisabled = mode === 'rush' && (!isTimerRunning || timeRemaining <= 0);
+  // Check if rush mode game is over (timer stopped and time depleted)
+  const isRushGameOver = mode === 'rush' && !isTimerRunning && timeRemaining <= 0;
 
   return (
     <div 
@@ -556,6 +584,24 @@ export default function MixingBoard() {
         position="top"
       />
 
+      {/* No Movement Warning */}
+      <AnimatePresence>
+        {noMovementWarning && (
+          <motion.div
+            initial={{ y: 50, opacity: 0, scale: 0.9 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 50, opacity: 0, scale: 0.9 }}
+            className="fixed bottom-32 left-1/2 -translate-x-1/2 z-50 bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-xl shadow-2xl font-bold text-center"
+            role="alert"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-xl">⚠️</span>
+              <span>Move the sliders to mix your color!</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Daily Mode Header - Compact single row */}
       {mode === 'daily' && (
         <motion.section
@@ -601,7 +647,7 @@ export default function MixingBoard() {
       )}
 
       {/* Rush Mode Game Over - Compact */}
-      {mode === 'rush' && !isTimerRunning && timeRemaining === 0 && (
+      {isRushGameOver && (
         <motion.section
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -655,7 +701,7 @@ export default function MixingBoard() {
       )}
 
       {/* Hide game UI when rush mode ended */}
-      {!(mode === 'rush' && !isTimerRunning && timeRemaining === 0) && (
+      {!isRushGameOver && (
         <>
           {/* Side-by-side color comparison - Always horizontal */}
           <div 
@@ -762,43 +808,46 @@ export default function MixingBoard() {
             ))}
           </motion.fieldset>
 
-          {/* Score Display with Label - Compact horizontal layout */}
+          {/* Score Display with Enhanced Feedback */}
           <AnimatePresence>
-            {currentScore > 0 && (
+            {currentScore > 0 && scoreResult && (
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 transition={{ type: 'spring', stiffness: 300 }}
-                className={`score-display bg-gradient-to-r ${scoreLabelColor} rounded-xl p-3 sm:p-4 shadow-xl flex items-center justify-between`}
-                role="status"
-                aria-live="polite"
-                aria-atomic="true"
-                aria-label={`${scoreLabel}! Match score: ${currentScore} out of 100`}
+                className="space-y-2"
               >
-                <div className="flex items-center gap-2 sm:gap-3">
-                  {/* Emoji */}
-                  <span className="text-2xl sm:text-3xl" aria-hidden="true">
-                    {currentScore >= 95 ? '🏆' : 
-                     currentScore >= 90 ? '✨' : 
-                     currentScore >= 80 ? '🎯' : 
-                     currentScore >= 60 ? '👀' : '🤔'}
-                  </span>
-                  {/* Score Label */}
-                  <div className="text-xl sm:text-2xl font-black text-white" aria-hidden="true">
-                    {scoreLabel}
-                  </div>
-                </div>
+                {/* Main feedback display */}
+                <ColorFeedback
+                  scoreResult={scoreResult}
+                  currentMix={currentMix}
+                  targetHex={targetColorHex}
+                  showHints={mode !== 'rush'} // Hide hints in rush mode for speed
+                />
                 
-                {/* Score number */}
-                <div className="text-3xl sm:text-4xl font-bold text-white tabular-nums">
-                  <span aria-hidden="true">{currentScore}</span>
-                  <span className="text-lg sm:text-xl text-white/70" aria-hidden="true">/100</span>
-                  <span className="sr-only">{currentScore} out of 100</span>
-                </div>
+                {/* RGB comparison (compact, hidden in rush mode) */}
+                {mode !== 'rush' && currentScore < 95 && (
+                  <RGBComparison
+                    currentMix={currentMix}
+                    targetHex={targetColorHex}
+                    compact
+                  />
+                )}
               </motion.div>
             )}
           </AnimatePresence>
+          
+          {/* Match quality bar for non-rush modes */}
+          {mode !== 'rush' && currentScore > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="px-1"
+            >
+              <ColorDifferenceBar score={currentScore} />
+            </motion.div>
+          )}
 
           {/* Action Buttons - Compact horizontal layout */}
           <div 
@@ -806,18 +855,25 @@ export default function MixingBoard() {
             role="group"
             aria-label="Game actions"
           >
-            {mode === 'rush' && isTimerRunning ? (
+            {mode === 'rush' && isTimerRunning && timeRemaining > 0 ? (
+              // Active Rush Mode - Submit & Next button
               <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: isSubmissionLocked ? 1 : 1.02 }}
+                whileTap={{ scale: isSubmissionLocked ? 1 : 0.98 }}
                 onClick={handleSubmit}
-                disabled={timeRemaining === 0}
-                className="game-button flex-1 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold py-3 px-4 rounded-xl shadow-xl disabled:opacity-50 disabled:cursor-not-allowed text-base sm:text-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-orange-900"
+                disabled={isSubmissionLocked}
+                className={`game-button flex-1 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold py-3 px-4 rounded-xl shadow-xl text-base sm:text-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-orange-900 disabled:opacity-70 disabled:cursor-not-allowed ${isSubmissionLocked ? 'animate-pulse' : ''}`}
                 aria-label="Submit your color mix and get next target"
+                aria-busy={isSubmissionLocked}
               >
-                Submit & Next <span aria-hidden="true">→</span>
+                {isSubmissionLocked ? 'Loading...' : 'Submit & Next'} <span aria-hidden="true">→</span>
               </motion.button>
-            ) : mode === 'rush' && !isTimerRunning && rushScore === 0 ? null : (
+            ) : mode === 'rush' ? (
+              // Rush Mode but not active (waiting to start OR game over)
+              // Don't show any buttons here - game over UI or start button handles this
+              null
+            ) : (
+              // Non-Rush modes (Daily, etc.)
               <>
                 <motion.button
                   whileHover={{ scale: 1.02 }}

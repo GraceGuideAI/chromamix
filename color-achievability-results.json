@@ -1,0 +1,1877 @@
+[
+  {
+    "targetHex": "#E63946",
+    "targetName": "Crimson Flame",
+    "bestMix": {
+      "r": 90,
+      "g": 22,
+      "b": 27,
+      "hex": "#e63845",
+      "deltaE": 0.20793494953646266,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.20793494953646266,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.22043334563604228,
+    "notes": []
+  },
+  {
+    "targetHex": "#C1121F",
+    "targetName": "Ruby Heart",
+    "bestMix": {
+      "r": 76,
+      "g": 6,
+      "b": 12,
+      "hex": "#c20f1f",
+      "deltaE": 0.20893633815686907,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.20893633815686907,
+    "rgbDistance": 0.715981991117436,
+    "hslDistance": 2.768498402981593,
+    "notes": []
+  },
+  {
+    "targetHex": "#9B2335",
+    "targetName": "Velvet Wine",
+    "bestMix": {
+      "r": 61,
+      "g": 14,
+      "b": 21,
+      "hex": "#9c2436",
+      "deltaE": 0.29340740586477687,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.29340740586477687,
+    "rgbDistance": 0.39215948730248307,
+    "hslDistance": 0.765906319181782,
+    "notes": []
+  },
+  {
+    "targetHex": "#D62828",
+    "targetName": "Scarlet Fire",
+    "bestMix": {
+      "r": 84,
+      "g": 16,
+      "b": 16,
+      "hex": "#d62929",
+      "deltaE": 0.18238438535872187,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.18238438535872187,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.689277204597272,
+    "notes": []
+  },
+  {
+    "targetHex": "#FF4444",
+    "targetName": "Cherry Pop",
+    "bestMix": {
+      "r": 100,
+      "g": 27,
+      "b": 27,
+      "hex": "#ff4545",
+      "deltaE": 0.1811113980651565,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.1811113980651565,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.19607843137254832,
+    "notes": []
+  },
+  {
+    "targetHex": "#B22222",
+    "targetName": "Brick Dust",
+    "bestMix": {
+      "r": 70,
+      "g": 13,
+      "b": 13,
+      "hex": "#b32121",
+      "deltaE": 0.2800252118736072,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.2800252118736072,
+    "rgbDistance": 0.39215948730248307,
+    "hslDistance": 0.943396226415083,
+    "notes": []
+  },
+  {
+    "targetHex": "#8B0000",
+    "targetName": "Deep Garnet",
+    "bestMix": {
+      "r": 55,
+      "g": 0,
+      "b": 0,
+      "hex": "#8c0000",
+      "deltaE": 0.2022935107436758,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.2022935107436758,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.19607843137255387,
+    "notes": [
+      "🔴 Deep saturated color - hard to achieve with light-based mixing"
+    ]
+  },
+  {
+    "targetHex": "#DC143C",
+    "targetName": "Cardinal Sin",
+    "bestMix": {
+      "r": 86,
+      "g": 9,
+      "b": 24,
+      "hex": "#db173d",
+      "deltaE": 0.26663828751072194,
+      "score": 99.5
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.5,
+    "minDeltaE": 0.26663828751072194,
+    "rgbDistance": 0.7509282474144496,
+    "hslDistance": 2.3801225537322632,
+    "notes": []
+  },
+  {
+    "targetHex": "#FF6B6B",
+    "targetName": "Coral Blush",
+    "bestMix": {
+      "r": 100,
+      "g": 42,
+      "b": 42,
+      "hex": "#ff6b6b",
+      "deltaE": 0,
+      "score": 100
+    },
+    "achievable": true,
+    "maxPossibleScore": 100,
+    "minDeltaE": 0,
+    "rgbDistance": 0,
+    "hslDistance": 0,
+    "notes": []
+  },
+  {
+    "targetHex": "#A52A2A",
+    "targetName": "Rustic Clay",
+    "bestMix": {
+      "r": 65,
+      "g": 17,
+      "b": 17,
+      "hex": "#a62b2b",
+      "deltaE": 0.2999981821076187,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.2999981821076187,
+    "rgbDistance": 0.39215948730248307,
+    "hslDistance": 0.6907316892282209,
+    "notes": [
+      "🟤 Earth tone/brown - requires subtractive mixing"
+    ]
+  },
+  {
+    "targetHex": "#FF6D00",
+    "targetName": "Tiger Lily",
+    "bestMix": {
+      "r": 100,
+      "g": 43,
+      "b": 1,
+      "hex": "#ff6e03",
+      "deltaE": 0.2022221662389861,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.2022221662389861,
+    "rgbDistance": 0.715981991117436,
+    "hslDistance": 0.5958455084377212,
+    "notes": []
+  },
+  {
+    "targetHex": "#E85D04",
+    "targetName": "Autumn Blaze",
+    "bestMix": {
+      "r": 91,
+      "g": 37,
+      "b": 3,
+      "hex": "#e85e08",
+      "deltaE": 0.235117599127592,
+      "score": 99.5
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.5,
+    "minDeltaE": 0.235117599127592,
+    "rgbDistance": 0.933526303714914,
+    "hslDistance": 3.375520584656041,
+    "notes": []
+  },
+  {
+    "targetHex": "#FF8C00",
+    "targetName": "Tangerine Dream",
+    "bestMix": {
+      "r": 100,
+      "g": 55,
+      "b": 0,
+      "hex": "#ff8c00",
+      "deltaE": 0,
+      "score": 100
+    },
+    "achievable": true,
+    "maxPossibleScore": 100,
+    "minDeltaE": 0,
+    "rgbDistance": 0,
+    "hslDistance": 0,
+    "notes": []
+  },
+  {
+    "targetHex": "#F77F00",
+    "targetName": "Mango Tango",
+    "bestMix": {
+      "r": 97,
+      "g": 50,
+      "b": 2,
+      "hex": "#f78005",
+      "deltaE": 0.2421940718391452,
+      "score": 99.5
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.5,
+    "minDeltaE": 0.2421940718391452,
+    "rgbDistance": 1.1544862711057542,
+    "hslDistance": 4.092118864256236,
+    "notes": []
+  },
+  {
+    "targetHex": "#FF9F1C",
+    "targetName": "Golden Sunrise",
+    "bestMix": {
+      "r": 100,
+      "g": 62,
+      "b": 10,
+      "hex": "#ff9e1a",
+      "deltaE": 0.28633201857192486,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.28633201857192486,
+    "rgbDistance": 0.5062757211265854,
+    "hslDistance": 0.39279855368815564,
+    "notes": []
+  },
+  {
+    "targetHex": "#FB8500",
+    "targetName": "Pumpkin Spice",
+    "bestMix": {
+      "r": 98,
+      "g": 52,
+      "b": 1,
+      "hex": "#fa8503",
+      "deltaE": 0.18279845661737418,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.18279845661737418,
+    "rgbDistance": 0.715981991117436,
+    "hslDistance": 2.4066121716418407,
+    "notes": []
+  },
+  {
+    "targetHex": "#ED6A5A",
+    "targetName": "Salmon Kiss",
+    "bestMix": {
+      "r": 93,
+      "g": 41,
+      "b": 35,
+      "hex": "#ed6959",
+      "deltaE": 0.22016632358739952,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.22016632358739952,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.2241998811153088,
+    "notes": []
+  },
+  {
+    "targetHex": "#CC5500",
+    "targetName": "Burnt Copper",
+    "bestMix": {
+      "r": 80,
+      "g": 33,
+      "b": 0,
+      "hex": "#cc5400",
+      "deltaE": 0.3168634104893819,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.3168634104893819,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.16339869281045694,
+    "notes": []
+  },
+  {
+    "targetHex": "#FF7F50",
+    "targetName": "Coral Reef",
+    "bestMix": {
+      "r": 100,
+      "g": 50,
+      "b": 32,
+      "hex": "#ff8052",
+      "deltaE": 0.3132197371036125,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.3132197371036125,
+    "rgbDistance": 0.5062757211265854,
+    "hslDistance": 0.40216976788375297,
+    "notes": []
+  },
+  {
+    "targetHex": "#E07020",
+    "targetName": "Amber Glow",
+    "bestMix": {
+      "r": 88,
+      "g": 44,
+      "b": 12,
+      "hex": "#e0701f",
+      "deltaE": 0.1394564824379473,
+      "score": 99.7
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.7,
+    "minDeltaE": 0.1394564824379473,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.2311208195990502,
+    "notes": []
+  },
+  {
+    "targetHex": "#FFD60A",
+    "targetName": "Sunshine",
+    "bestMix": {
+      "r": 100,
+      "g": 84,
+      "b": 4,
+      "hex": "#ffd60a",
+      "deltaE": 0,
+      "score": 100
+    },
+    "achievable": true,
+    "maxPossibleScore": 100,
+    "minDeltaE": 0,
+    "rgbDistance": 0,
+    "hslDistance": 0,
+    "notes": []
+  },
+  {
+    "targetHex": "#FFC300",
+    "targetName": "Golden Hour",
+    "bestMix": {
+      "r": 100,
+      "g": 77,
+      "b": 3,
+      "hex": "#ffc408",
+      "deltaE": 0.31301779204782926,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.31301779204782926,
+    "rgbDistance": 1.8254030720444108,
+    "hslDistance": 1.573140542581112,
+    "notes": []
+  },
+  {
+    "targetHex": "#FFEA00",
+    "targetName": "Electric Lemon",
+    "bestMix": {
+      "r": 100,
+      "g": 92,
+      "b": 0,
+      "hex": "#ffeb00",
+      "deltaE": 0.29018183092802335,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.29018183092802335,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.13071895424836555,
+    "notes": []
+  },
+  {
+    "targetHex": "#FFB703",
+    "targetName": "Honeycomb",
+    "bestMix": {
+      "r": 100,
+      "g": 72,
+      "b": 4,
+      "hex": "#ffb80a",
+      "deltaE": 0.302476277829788,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.302476277829788,
+    "rgbDistance": 1.6009844028042373,
+    "hslDistance": 1.3792757581097723,
+    "notes": []
+  },
+  {
+    "targetHex": "#F4D35E",
+    "targetName": "Buttercup",
+    "bestMix": {
+      "r": 96,
+      "g": 83,
+      "b": 37,
+      "hex": "#f5d45e",
+      "deltaE": 0.2548612264085206,
+      "score": 99.5
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.5,
+    "minDeltaE": 0.2548612264085206,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 1.1130278548940116,
+    "notes": []
+  },
+  {
+    "targetHex": "#FFE066",
+    "targetName": "Canary Song",
+    "bestMix": {
+      "r": 100,
+      "g": 88,
+      "b": 40,
+      "hex": "#ffe066",
+      "deltaE": 0,
+      "score": 100
+    },
+    "achievable": true,
+    "maxPossibleScore": 100,
+    "minDeltaE": 0,
+    "rgbDistance": 0,
+    "hslDistance": 0,
+    "notes": []
+  },
+  {
+    "targetHex": "#E9C46A",
+    "targetName": "Sandy Beach",
+    "bestMix": {
+      "r": 91,
+      "g": 77,
+      "b": 42,
+      "hex": "#e8c46b",
+      "deltaE": 0.289940840712365,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.289940840712365,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 1.1724616489021245,
+    "notes": []
+  },
+  {
+    "targetHex": "#DAA520",
+    "targetName": "Goldenrod",
+    "bestMix": {
+      "r": 86,
+      "g": 65,
+      "b": 13,
+      "hex": "#dba621",
+      "deltaE": 0.27951766496311786,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.27951766496311786,
+    "rgbDistance": 0.39215948730248307,
+    "hslDistance": 0.7088364666954892,
+    "notes": []
+  },
+  {
+    "targetHex": "#FFDD00",
+    "targetName": "Taxi Yellow",
+    "bestMix": {
+      "r": 100,
+      "g": 87,
+      "b": 1,
+      "hex": "#ffde03",
+      "deltaE": 0.3063095613081339,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.3063095613081339,
+    "rgbDistance": 0.715981991117436,
+    "hslDistance": 0.5935651413857606,
+    "notes": []
+  },
+  {
+    "targetHex": "#F5DEB3",
+    "targetName": "Wheat Field",
+    "bestMix": {
+      "r": 96,
+      "g": 87,
+      "b": 70,
+      "hex": "#f5deb3",
+      "deltaE": 0,
+      "score": 100
+    },
+    "achievable": true,
+    "maxPossibleScore": 100,
+    "minDeltaE": 0,
+    "rgbDistance": 0,
+    "hslDistance": 0,
+    "notes": []
+  },
+  {
+    "targetHex": "#2D6A4F",
+    "targetName": "Forest Deep",
+    "bestMix": {
+      "r": 18,
+      "g": 42,
+      "b": 31,
+      "hex": "#2e6b4f",
+      "deltaE": 0.46202894380453347,
+      "score": 99.1
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.1,
+    "minDeltaE": 0.46202894380453347,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.6933547132945612,
+    "notes": [
+      "🟤 Earth tone/brown - requires subtractive mixing"
+    ]
+  },
+  {
+    "targetHex": "#40916C",
+    "targetName": "Emerald Isle",
+    "bestMix": {
+      "r": 25,
+      "g": 57,
+      "b": 42,
+      "hex": "#40916b",
+      "deltaE": 0.2934034593231185,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.2934034593231185,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.15948963317384207,
+    "notes": [
+      "🟤 Earth tone/brown - requires subtractive mixing"
+    ]
+  },
+  {
+    "targetHex": "#52B788",
+    "targetName": "Jade Garden",
+    "bestMix": {
+      "r": 32,
+      "g": 72,
+      "b": 54,
+      "hex": "#52b88a",
+      "deltaE": 0.4221705652224189,
+      "score": 99.2
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.2,
+    "minDeltaE": 0.4221705652224189,
+    "rgbDistance": 0.5062757211265854,
+    "hslDistance": 0.6426227728387106,
+    "notes": []
+  },
+  {
+    "targetHex": "#74C69D",
+    "targetName": "Mint Fresh",
+    "bestMix": {
+      "r": 46,
+      "g": 78,
+      "b": 62,
+      "hex": "#75c79e",
+      "deltaE": 0.2662574430209084,
+      "score": 99.5
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.5,
+    "minDeltaE": 0.2662574430209084,
+    "rgbDistance": 0.39215948730248307,
+    "hslDistance": 0.5829342494965737,
+    "notes": [
+      "🌸 Pastel/muted color - appears washed out in additive"
+    ]
+  },
+  {
+    "targetHex": "#95D5B2",
+    "targetName": "Seafoam",
+    "bestMix": {
+      "r": 59,
+      "g": 84,
+      "b": 70,
+      "hex": "#96d6b3",
+      "deltaE": 0.2464480656074014,
+      "score": 99.5
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.5,
+    "minDeltaE": 0.2464480656074014,
+    "rgbDistance": 0.39215948730248307,
+    "hslDistance": 0.710417488021207,
+    "notes": [
+      "🌸 Pastel/muted color - appears washed out in additive"
+    ]
+  },
+  {
+    "targetHex": "#1B4332",
+    "targetName": "Pine Shadow",
+    "bestMix": {
+      "r": 10,
+      "g": 26,
+      "b": 19,
+      "hex": "#1a4230",
+      "deltaE": 0.5546921316451184,
+      "score": 98.9
+    },
+    "achievable": true,
+    "maxPossibleScore": 98.9,
+    "minDeltaE": 0.5546921316451184,
+    "rgbDistance": 0.5545972655564512,
+    "hslDistance": 1.0667882068990706,
+    "notes": [
+      "🟤 Earth tone/brown - requires subtractive mixing"
+    ]
+  },
+  {
+    "targetHex": "#38A169",
+    "targetName": "Clover Luck",
+    "bestMix": {
+      "r": 22,
+      "g": 63,
+      "b": 41,
+      "hex": "#38a169",
+      "deltaE": 0,
+      "score": 100
+    },
+    "achievable": true,
+    "maxPossibleScore": 100,
+    "minDeltaE": 0,
+    "rgbDistance": 0,
+    "hslDistance": 0,
+    "notes": [
+      "🟤 Earth tone/brown - requires subtractive mixing"
+    ]
+  },
+  {
+    "targetHex": "#68D391",
+    "targetName": "Spring Leaf",
+    "bestMix": {
+      "r": 41,
+      "g": 83,
+      "b": 57,
+      "hex": "#69d491",
+      "deltaE": 0.30839842678510104,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.30839842678510104,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.7117860812544418,
+    "notes": []
+  },
+  {
+    "targetHex": "#228B22",
+    "targetName": "Forest Fern",
+    "bestMix": {
+      "r": 13,
+      "g": 54,
+      "b": 13,
+      "hex": "#218a21",
+      "deltaE": 0.3675094879133297,
+      "score": 99.3
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.3,
+    "minDeltaE": 0.3675094879133297,
+    "rgbDistance": 0.39215948730248307,
+    "hslDistance": 0.8109860544551508,
+    "notes": []
+  },
+  {
+    "targetHex": "#32CD32",
+    "targetName": "Lime Zest",
+    "bestMix": {
+      "r": 20,
+      "g": 80,
+      "b": 20,
+      "hex": "#33cc33",
+      "deltaE": 0.27455797013829686,
+      "score": 99.5
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.5,
+    "minDeltaE": 0.27455797013829686,
+    "rgbDistance": 0.39215948730248307,
+    "hslDistance": 0.7843137254901933,
+    "notes": []
+  },
+  {
+    "targetHex": "#7CB518",
+    "targetName": "Kiwi Burst",
+    "bestMix": {
+      "r": 49,
+      "g": 71,
+      "b": 10,
+      "hex": "#7db51a",
+      "deltaE": 0.15585161486165244,
+      "score": 99.7
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.7,
+    "minDeltaE": 0.15585161486165244,
+    "rgbDistance": 0.5062757211265854,
+    "hslDistance": 1.75119568887644,
+    "notes": []
+  },
+  {
+    "targetHex": "#006400",
+    "targetName": "Deep Moss",
+    "bestMix": {
+      "r": 0,
+      "g": 39,
+      "b": 0,
+      "hex": "#006300",
+      "deltaE": 0.3262285197306142,
+      "score": 99.3
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.3,
+    "minDeltaE": 0.3262285197306142,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.19607843137254832,
+    "notes": [
+      "🔴 Deep saturated color - hard to achieve with light-based mixing"
+    ]
+  },
+  {
+    "targetHex": "#00CED1",
+    "targetName": "Tropical Tide",
+    "bestMix": {
+      "r": 5,
+      "g": 81,
+      "b": 82,
+      "hex": "#0dcfd1",
+      "deltaE": 0.4185052153924738,
+      "score": 99.2
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.2,
+    "minDeltaE": 0.4185052153924738,
+    "rgbDistance": 2.952069375417234,
+    "hslDistance": 11.986603047751618,
+    "notes": []
+  },
+  {
+    "targetHex": "#20B2AA",
+    "targetName": "Lagoon Blue",
+    "bestMix": {
+      "r": 12,
+      "g": 70,
+      "b": 67,
+      "hex": "#1fb3ab",
+      "deltaE": 0.28225583817768923,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.28225583817768923,
+    "rgbDistance": 0.39215948730248307,
+    "hslDistance": 0.9525376592265068,
+    "notes": []
+  },
+  {
+    "targetHex": "#40E0D0",
+    "targetName": "Turquoise Dream",
+    "bestMix": {
+      "r": 25,
+      "g": 88,
+      "b": 81,
+      "hex": "#40e0cf",
+      "deltaE": 0.3232284638445583,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.3232284638445583,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.15015015015015015,
+    "notes": []
+  },
+  {
+    "targetHex": "#48D1CC",
+    "targetName": "Aqua Marine",
+    "bestMix": {
+      "r": 28,
+      "g": 82,
+      "b": 80,
+      "hex": "#47d1cc",
+      "deltaE": 0.05823892785121806,
+      "score": 99.9
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.9,
+    "minDeltaE": 0.05823892785121806,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.26265019565091685,
+    "notes": []
+  },
+  {
+    "targetHex": "#00FFFF",
+    "targetName": "Electric Cyan",
+    "bestMix": {
+      "r": 0,
+      "g": 100,
+      "b": 100,
+      "hex": "#00ffff",
+      "deltaE": 0,
+      "score": 100
+    },
+    "achievable": true,
+    "maxPossibleScore": 100,
+    "minDeltaE": 0,
+    "rgbDistance": 0,
+    "hslDistance": 0,
+    "notes": []
+  },
+  {
+    "targetHex": "#5F9EA0",
+    "targetName": "Cadet Mist",
+    "bestMix": {
+      "r": 37,
+      "g": 62,
+      "b": 63,
+      "hex": "#5e9ea1",
+      "deltaE": 0.4166256039609499,
+      "score": 99.2
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.2,
+    "minDeltaE": 0.4166256039609499,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.7935686679274742,
+    "notes": []
+  },
+  {
+    "targetHex": "#008B8B",
+    "targetName": "Deep Teal",
+    "bestMix": {
+      "r": 1,
+      "g": 54,
+      "b": 54,
+      "hex": "#038a8a",
+      "deltaE": 0.3562308809890247,
+      "score": 99.3
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.3,
+    "minDeltaE": 0.3562308809890247,
+    "rgbDistance": 0.7509282474144496,
+    "hslDistance": 4.273350917523716,
+    "notes": [
+      "🔴 Deep saturated color - hard to achieve with light-based mixing"
+    ]
+  },
+  {
+    "targetHex": "#66CDAA",
+    "targetName": "Seafoam Mint",
+    "bestMix": {
+      "r": 40,
+      "g": 80,
+      "b": 66,
+      "hex": "#66cca8",
+      "deltaE": 0.42326407933408977,
+      "score": 99.2
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.2,
+    "minDeltaE": 0.42326407933408977,
+    "rgbDistance": 0.5062757211265854,
+    "hslDistance": 0.7956644729136654,
+    "notes": []
+  },
+  {
+    "targetHex": "#0077B6",
+    "targetName": "Ocean Depths",
+    "bestMix": {
+      "r": 0,
+      "g": 47,
+      "b": 72,
+      "hex": "#0078b8",
+      "deltaE": 0.42091401965278086,
+      "score": 99.2
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.2,
+    "minDeltaE": 0.42091401965278086,
+    "rgbDistance": 0.5062757211265854,
+    "hslDistance": 0.39609860416652226,
+    "notes": [
+      "🔴 Deep saturated color - hard to achieve with light-based mixing"
+    ]
+  },
+  {
+    "targetHex": "#00B4D8",
+    "targetName": "Sky Bright",
+    "bestMix": {
+      "r": 0,
+      "g": 71,
+      "b": 85,
+      "hex": "#00b5d9",
+      "deltaE": 0.2786635896942137,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.2786635896942137,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.19774274991426022,
+    "notes": []
+  },
+  {
+    "targetHex": "#0096C7",
+    "targetName": "Azure Wave",
+    "bestMix": {
+      "r": 0,
+      "g": 59,
+      "b": 78,
+      "hex": "#0096c7",
+      "deltaE": 0,
+      "score": 100
+    },
+    "achievable": true,
+    "maxPossibleScore": 100,
+    "minDeltaE": 0,
+    "rgbDistance": 0,
+    "hslDistance": 0,
+    "notes": [
+      "🔴 Deep saturated color - hard to achieve with light-based mixing"
+    ]
+  },
+  {
+    "targetHex": "#023E8A",
+    "targetName": "Midnight Sea",
+    "bestMix": {
+      "r": 0,
+      "g": 24,
+      "b": 54,
+      "hex": "#003d8a",
+      "deltaE": 0.33201365417579987,
+      "score": 99.3
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.3,
+    "minDeltaE": 0.33201365417579987,
+    "rgbDistance": 0.5062757211265854,
+    "hslDistance": 2.8840660427072375,
+    "notes": [
+      "🔴 Deep saturated color - hard to achieve with light-based mixing"
+    ]
+  },
+  {
+    "targetHex": "#4361EE",
+    "targetName": "Electric Blue",
+    "bestMix": {
+      "r": 26,
+      "g": 38,
+      "b": 93,
+      "hex": "#4261ed",
+      "deltaE": 0.19710713529325088,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.19710713529325088,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.9107734708096711,
+    "notes": []
+  },
+  {
+    "targetHex": "#3A86FF",
+    "targetName": "Cornflower",
+    "bestMix": {
+      "r": 22,
+      "g": 52,
+      "b": 100,
+      "hex": "#3885ff",
+      "deltaE": 0.3205310543656776,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.3205310543656776,
+    "rgbDistance": 0.5062757211265854,
+    "hslDistance": 0.3940190535482409,
+    "notes": []
+  },
+  {
+    "targetHex": "#4895EF",
+    "targetName": "Crystal Lake",
+    "bestMix": {
+      "r": 27,
+      "g": 58,
+      "b": 94,
+      "hex": "#4594f0",
+      "deltaE": 0.3295890878403299,
+      "score": 99.3
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.3,
+    "minDeltaE": 0.3295890878403299,
+    "rgbDistance": 0.7509282474144496,
+    "hslDistance": 1.2200558635549086,
+    "notes": []
+  },
+  {
+    "targetHex": "#90E0EF",
+    "targetName": "Powder Blue",
+    "bestMix": {
+      "r": 56,
+      "g": 88,
+      "b": 94,
+      "hex": "#8fe0f0",
+      "deltaE": 0.3315423646883748,
+      "score": 99.3
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.3,
+    "minDeltaE": 0.3315423646883748,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 1.5848007530709287,
+    "notes": []
+  },
+  {
+    "targetHex": "#1E3A8A",
+    "targetName": "Sapphire Night",
+    "bestMix": {
+      "r": 12,
+      "g": 23,
+      "b": 54,
+      "hex": "#1f3b8a",
+      "deltaE": 0.3242154867896402,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.3242154867896402,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.9930205016582542,
+    "notes": []
+  },
+  {
+    "targetHex": "#2563EB",
+    "targetName": "Cobalt Spark",
+    "bestMix": {
+      "r": 15,
+      "g": 39,
+      "b": 92,
+      "hex": "#2663eb",
+      "deltaE": 0.06249948550010158,
+      "score": 99.9
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.9,
+    "minDeltaE": 0.06249948550010158,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.22981795624312087,
+    "notes": []
+  },
+  {
+    "targetHex": "#60A5FA",
+    "targetName": "Baby Blue",
+    "bestMix": {
+      "r": 38,
+      "g": 65,
+      "b": 98,
+      "hex": "#61a6fa",
+      "deltaE": 0.28749437176945525,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.28749437176945525,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.21964707187922117,
+    "notes": []
+  },
+  {
+    "targetHex": "#1D4ED8",
+    "targetName": "Royal Velvet",
+    "bestMix": {
+      "r": 10,
+      "g": 30,
+      "b": 85,
+      "hex": "#1a4dd9",
+      "deltaE": 0.3146960758832695,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.3146960758832695,
+    "rgbDistance": 0.7509282474144496,
+    "hslDistance": 2.3114394744521234,
+    "notes": []
+  },
+  {
+    "targetHex": "#7209B7",
+    "targetName": "Grape Royale",
+    "bestMix": {
+      "r": 45,
+      "g": 3,
+      "b": 72,
+      "hex": "#7308b8",
+      "deltaE": 0.19284551501653255,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.19284551501653255,
+    "rgbDistance": 0.39215948730248307,
+    "hslDistance": 1.0506253292033336,
+    "notes": [
+      "🔴 Deep saturated color - hard to achieve with light-based mixing",
+      "🔵 Blue region - known CIEDE2000 problem area"
+    ]
+  },
+  {
+    "targetHex": "#9D4EDD",
+    "targetName": "Orchid Bloom",
+    "bestMix": {
+      "r": 62,
+      "g": 30,
+      "b": 87,
+      "hex": "#9e4dde",
+      "deltaE": 0.2455554297046179,
+      "score": 99.5
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.5,
+    "minDeltaE": 0.2455554297046179,
+    "rgbDistance": 0.39215948730248307,
+    "hslDistance": 0.9582136703303625,
+    "notes": [
+      "🔵 Blue region - known CIEDE2000 problem area"
+    ]
+  },
+  {
+    "targetHex": "#B5179E",
+    "targetName": "Magenta Magic",
+    "bestMix": {
+      "r": 71,
+      "g": 9,
+      "b": 62,
+      "hex": "#b5179e",
+      "deltaE": 0,
+      "score": 100
+    },
+    "achievable": true,
+    "maxPossibleScore": 100,
+    "minDeltaE": 0,
+    "rgbDistance": 0,
+    "hslDistance": 0,
+    "notes": []
+  },
+  {
+    "targetHex": "#560BAD",
+    "targetName": "Deep Violet",
+    "bestMix": {
+      "r": 34,
+      "g": 4,
+      "b": 68,
+      "hex": "#570aad",
+      "deltaE": 0.1524888915033224,
+      "score": 99.7
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.7,
+    "minDeltaE": 0.1524888915033224,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 1.0825008122891642,
+    "notes": [
+      "🔴 Deep saturated color - hard to achieve with light-based mixing",
+      "🔵 Blue region - known CIEDE2000 problem area"
+    ]
+  },
+  {
+    "targetHex": "#8B5CF6",
+    "targetName": "Lavender Dream",
+    "bestMix": {
+      "r": 55,
+      "g": 36,
+      "b": 97,
+      "hex": "#8c5cf7",
+      "deltaE": 0.21287027064371647,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.21287027064371647,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 1.1336215938355838,
+    "notes": [
+      "🔵 Blue region - known CIEDE2000 problem area"
+    ]
+  },
+  {
+    "targetHex": "#A855F7",
+    "targetName": "Amethyst Glow",
+    "bestMix": {
+      "r": 66,
+      "g": 33,
+      "b": 97,
+      "hex": "#a854f7",
+      "deltaE": 0.2019921650991647,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.2019921650991647,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.22183444140574818,
+    "notes": [
+      "🔵 Blue region - known CIEDE2000 problem area"
+    ]
+  },
+  {
+    "targetHex": "#C77DFF",
+    "targetName": "Lilac Mist",
+    "bestMix": {
+      "r": 78,
+      "g": 49,
+      "b": 100,
+      "hex": "#c77dff",
+      "deltaE": 0,
+      "score": 100
+    },
+    "achievable": true,
+    "maxPossibleScore": 100,
+    "minDeltaE": 0,
+    "rgbDistance": 0,
+    "hslDistance": 0,
+    "notes": [
+      "🔵 Blue region - known CIEDE2000 problem area"
+    ]
+  },
+  {
+    "targetHex": "#6B21A8",
+    "targetName": "Plum Shadow",
+    "bestMix": {
+      "r": 42,
+      "g": 13,
+      "b": 66,
+      "hex": "#6b21a8",
+      "deltaE": 0,
+      "score": 100
+    },
+    "achievable": true,
+    "maxPossibleScore": 100,
+    "minDeltaE": 0,
+    "rgbDistance": 0,
+    "hslDistance": 0,
+    "notes": [
+      "🔵 Blue region - known CIEDE2000 problem area"
+    ]
+  },
+  {
+    "targetHex": "#9333EA",
+    "targetName": "Violet Storm",
+    "bestMix": {
+      "r": 58,
+      "g": 20,
+      "b": 92,
+      "hex": "#9433eb",
+      "deltaE": 0.2173718119758524,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.2173718119758524,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.8359014741032932,
+    "notes": [
+      "🔵 Blue region - known CIEDE2000 problem area"
+    ]
+  },
+  {
+    "targetHex": "#7C3AED",
+    "targetName": "Iris Petal",
+    "bestMix": {
+      "r": 49,
+      "g": 23,
+      "b": 93,
+      "hex": "#7d3bed",
+      "deltaE": 0.2599294194286463,
+      "score": 99.5
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.5,
+    "minDeltaE": 0.2599294194286463,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.21879309966327695,
+    "notes": [
+      "🔵 Blue region - known CIEDE2000 problem area"
+    ]
+  },
+  {
+    "targetHex": "#DF00FF",
+    "targetName": "Phlox",
+    "bestMix": {
+      "r": 87,
+      "g": 2,
+      "b": 100,
+      "hex": "#de05ff",
+      "deltaE": 0.14066236198980106,
+      "score": 99.7
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.7,
+    "minDeltaE": 0.14066236198980106,
+    "rgbDistance": 1.1544862711057542,
+    "hslDistance": 1.0041189893032532,
+    "notes": []
+  },
+  {
+    "targetHex": "#4B0082",
+    "targetName": "Indigo Night",
+    "bestMix": {
+      "r": 29,
+      "g": 0,
+      "b": 51,
+      "hex": "#4a0082",
+      "deltaE": 0.17833260178078283,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.17833260178078283,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.25641025641025156,
+    "notes": [
+      "🔴 Deep saturated color - hard to achieve with light-based mixing",
+      "🔵 Blue region - known CIEDE2000 problem area"
+    ]
+  },
+  {
+    "targetHex": "#FF006E",
+    "targetName": "Hot Pink",
+    "bestMix": {
+      "r": 100,
+      "g": 1,
+      "b": 43,
+      "hex": "#ff036e",
+      "deltaE": 0.09122870082976929,
+      "score": 99.8
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.8,
+    "minDeltaE": 0.09122870082976929,
+    "rgbDistance": 0.6792401566780628,
+    "hslDistance": 0.630029201361125,
+    "notes": []
+  },
+  {
+    "targetHex": "#F72585",
+    "targetName": "Fuchsia Pop",
+    "bestMix": {
+      "r": 97,
+      "g": 14,
+      "b": 52,
+      "hex": "#f72485",
+      "deltaE": 0.08133828104708808,
+      "score": 99.8
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.8,
+    "minDeltaE": 0.08133828104708808,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.21394330248241727,
+    "notes": []
+  },
+  {
+    "targetHex": "#FF69B4",
+    "targetName": "Bubblegum",
+    "bestMix": {
+      "r": 100,
+      "g": 41,
+      "b": 71,
+      "hex": "#ff69b5",
+      "deltaE": 0.21336230162526645,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.21336230162526645,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.2222222222222096,
+    "notes": []
+  },
+  {
+    "targetHex": "#FF1493",
+    "targetName": "Deep Rose",
+    "bestMix": {
+      "r": 100,
+      "g": 8,
+      "b": 58,
+      "hex": "#ff1494",
+      "deltaE": 0.19969734249119725,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.19969734249119725,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.14184397163120366,
+    "notes": []
+  },
+  {
+    "targetHex": "#DB7093",
+    "targetName": "Dusty Rose",
+    "bestMix": {
+      "r": 86,
+      "g": 44,
+      "b": 58,
+      "hex": "#db7094",
+      "deltaE": 0.2856006184085972,
+      "score": 99.4
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.4,
+    "minDeltaE": 0.2856006184085972,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.1862197392923678,
+    "notes": []
+  },
+  {
+    "targetHex": "#FFB6C1",
+    "targetName": "Cotton Candy",
+    "bestMix": {
+      "r": 100,
+      "g": 71,
+      "b": 75,
+      "hex": "#ffb5bf",
+      "deltaE": 0.4788697516941644,
+      "score": 99
+    },
+    "achievable": true,
+    "maxPossibleScore": 99,
+    "minDeltaE": 0.4788697516941644,
+    "rgbDistance": 0.5062757211265854,
+    "hslDistance": 0.5541743040339061,
+    "notes": []
+  },
+  {
+    "targetHex": "#FF85A1",
+    "targetName": "Flamingo",
+    "bestMix": {
+      "r": 100,
+      "g": 52,
+      "b": 63,
+      "hex": "#ff85a1",
+      "deltaE": 0,
+      "score": 100
+    },
+    "achievable": true,
+    "maxPossibleScore": 100,
+    "minDeltaE": 0,
+    "rgbDistance": 0,
+    "hslDistance": 0,
+    "notes": []
+  },
+  {
+    "targetHex": "#E91E63",
+    "targetName": "Raspberry",
+    "bestMix": {
+      "r": 91,
+      "g": 12,
+      "b": 39,
+      "hex": "#e81f63",
+      "deltaE": 0.17910105347997393,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.17910105347997393,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.8108802799327606,
+    "notes": []
+  },
+  {
+    "targetHex": "#F06292",
+    "targetName": "Peony Blush",
+    "bestMix": {
+      "r": 94,
+      "g": 38,
+      "b": 57,
+      "hex": "#f06191",
+      "deltaE": 0.23343660021616608,
+      "score": 99.5
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.5,
+    "minDeltaE": 0.23343660021616608,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.22988748491195576,
+    "notes": []
+  },
+  {
+    "targetHex": "#EC407A",
+    "targetName": "Carnation",
+    "bestMix": {
+      "r": 93,
+      "g": 25,
+      "b": 48,
+      "hex": "#ed407a",
+      "deltaE": 0.21266071743963683,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.21266071743963683,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.8937736868679571,
+    "notes": []
+  },
+  {
+    "targetHex": "#8D6E63",
+    "targetName": "Cocoa Dust",
+    "bestMix": {
+      "r": 55,
+      "g": 43,
+      "b": 39,
+      "hex": "#8c6e63",
+      "deltaE": 0.37688174688728904,
+      "score": 99.2
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.2,
+    "minDeltaE": 0.37688174688728904,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.3987016065974608,
+    "notes": [
+      "🟤 Earth tone/brown - requires subtractive mixing"
+    ]
+  },
+  {
+    "targetHex": "#6F4E37",
+    "targetName": "Coffee Bean",
+    "bestMix": {
+      "r": 43,
+      "g": 30,
+      "b": 21,
+      "hex": "#6e4d36",
+      "deltaE": 0.34683436572133863,
+      "score": 99.3
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.3,
+    "minDeltaE": 0.34683436572133863,
+    "rgbDistance": 0.39215948730248307,
+    "hslDistance": 0.5683646429569725,
+    "notes": [
+      "🟤 Earth tone/brown - requires subtractive mixing"
+    ]
+  },
+  {
+    "targetHex": "#A0522D",
+    "targetName": "Sienna Earth",
+    "bestMix": {
+      "r": 63,
+      "g": 32,
+      "b": 18,
+      "hex": "#a1522e",
+      "deltaE": 0.4187004906969956,
+      "score": 99.2
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.2,
+    "minDeltaE": 0.4187004906969956,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.6882886996876957,
+    "notes": [
+      "🟤 Earth tone/brown - requires subtractive mixing"
+    ]
+  },
+  {
+    "targetHex": "#8B4513",
+    "targetName": "Saddle Tan",
+    "bestMix": {
+      "r": 55,
+      "g": 27,
+      "b": 7,
+      "hex": "#8c4512",
+      "deltaE": 0.25948711362033294,
+      "score": 99.5
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.5,
+    "minDeltaE": 0.25948711362033294,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 1.2663030781960518,
+    "notes": [
+      "🔴 Deep saturated color - hard to achieve with light-based mixing"
+    ]
+  },
+  {
+    "targetHex": "#CD853F",
+    "targetName": "Desert Sand",
+    "bestMix": {
+      "r": 80,
+      "g": 52,
+      "b": 25,
+      "hex": "#cc8540",
+      "deltaE": 0.24536216364360358,
+      "score": 99.5
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.5,
+    "minDeltaE": 0.24536216364360358,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.8264485906460416,
+    "notes": []
+  },
+  {
+    "targetHex": "#D2691E",
+    "targetName": "Cinnamon",
+    "bestMix": {
+      "r": 82,
+      "g": 41,
+      "b": 12,
+      "hex": "#d1691f",
+      "deltaE": 0.21041463843862065,
+      "score": 99.6
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.6,
+    "minDeltaE": 0.21041463843862065,
+    "rgbDistance": 0.3201968805608475,
+    "hslDistance": 0.83365839452189,
+    "notes": []
+  },
+  {
+    "targetHex": "#BC8F8F",
+    "targetName": "Dusty Rose Brown",
+    "bestMix": {
+      "r": 74,
+      "g": 56,
+      "b": 56,
+      "hex": "#bd8f8f",
+      "deltaE": 0.2732645457656366,
+      "score": 99.5
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.5,
+    "minDeltaE": 0.2732645457656366,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.729863341902231,
+    "notes": [
+      "🌸 Pastel/muted color - appears washed out in additive"
+    ]
+  },
+  {
+    "targetHex": "#C4A484",
+    "targetName": "Warm Taupe",
+    "bestMix": {
+      "r": 77,
+      "g": 64,
+      "b": 51,
+      "hex": "#c4a382",
+      "deltaE": 0.44571317510253616,
+      "score": 99.1
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.1,
+    "minDeltaE": 0.44571317510253616,
+    "rgbDistance": 0.5062757211265854,
+    "hslDistance": 0.8064933055976806,
+    "notes": [
+      "🌸 Pastel/muted color - appears washed out in additive"
+    ]
+  },
+  {
+    "targetHex": "#4A5568",
+    "targetName": "Storm Cloud",
+    "bestMix": {
+      "r": 29,
+      "g": 33,
+      "b": 40,
+      "hex": "#4a5466",
+      "deltaE": 0.5598305164123573,
+      "score": 98.9
+    },
+    "achievable": true,
+    "maxPossibleScore": 98.9,
+    "minDeltaE": 0.5598305164123573,
+    "rgbDistance": 0.5062757211265854,
+    "hslDistance": 1.024313084604537,
+    "notes": [
+      "🟤 Earth tone/brown - requires subtractive mixing"
+    ]
+  },
+  {
+    "targetHex": "#718096",
+    "targetName": "Steel Mist",
+    "bestMix": {
+      "r": 44,
+      "g": 50,
+      "b": 59,
+      "hex": "#708096",
+      "deltaE": 0.4178411135267316,
+      "score": 99.2
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.2,
+    "minDeltaE": 0.4178411135267316,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 0.40276498141296574,
+    "notes": []
+  },
+  {
+    "targetHex": "#A0AEC0",
+    "targetName": "Silver Lining",
+    "bestMix": {
+      "r": 62,
+      "g": 68,
+      "b": 75,
+      "hex": "#9eadbf",
+      "deltaE": 0.5331394871156707,
+      "score": 98.9
+    },
+    "achievable": true,
+    "maxPossibleScore": 98.9,
+    "minDeltaE": 0.5331394871156707,
+    "rgbDistance": 0.5545972655564512,
+    "hslDistance": 0.6471684866223854,
+    "notes": [
+      "🌸 Pastel/muted color - appears washed out in additive"
+    ]
+  },
+  {
+    "targetHex": "#2D3748",
+    "targetName": "Charcoal",
+    "bestMix": {
+      "r": 17,
+      "g": 21,
+      "b": 28,
+      "hex": "#2b3647",
+      "deltaE": 0.5847004956634143,
+      "score": 98.8
+    },
+    "achievable": true,
+    "maxPossibleScore": 98.8,
+    "minDeltaE": 0.5847004956634143,
+    "rgbDistance": 0.5545972655564512,
+    "hslDistance": 1.606729280829497,
+    "notes": [
+      "🟤 Earth tone/brown - requires subtractive mixing"
+    ]
+  },
+  {
+    "targetHex": "#1A202C",
+    "targetName": "Obsidian",
+    "bestMix": {
+      "r": 10,
+      "g": 13,
+      "b": 18,
+      "hex": "#1a212e",
+      "deltaE": 0.6201037397810022,
+      "score": 98.8
+    },
+    "achievable": true,
+    "maxPossibleScore": 98.8,
+    "minDeltaE": 0.6201037397810022,
+    "rgbDistance": 0.5062757211265854,
+    "hslDistance": 2.105674526465664,
+    "notes": [
+      "🟤 Earth tone/brown - requires subtractive mixing"
+    ]
+  },
+  {
+    "targetHex": "#E2E8F0",
+    "targetName": "Moonstone",
+    "bestMix": {
+      "r": 89,
+      "g": 91,
+      "b": 94,
+      "hex": "#e3e8f0",
+      "deltaE": 0.4687899132168931,
+      "score": 99.1
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.1,
+    "minDeltaE": 0.4687899132168931,
+    "rgbDistance": 0.22641338555935425,
+    "hslDistance": 1.6611128721924462,
+    "notes": [
+      "🌸 Pastel/muted color - appears washed out in additive"
+    ]
+  },
+  {
+    "targetHex": "#94A3B8",
+    "targetName": "Slate Blue",
+    "bestMix": {
+      "r": 58,
+      "g": 64,
+      "b": 72,
+      "hex": "#94a3b8",
+      "deltaE": 0,
+      "score": 100
+    },
+    "achievable": true,
+    "maxPossibleScore": 100,
+    "minDeltaE": 0,
+    "rgbDistance": 0,
+    "hslDistance": 0,
+    "notes": [
+      "🌸 Pastel/muted color - appears washed out in additive"
+    ]
+  },
+  {
+    "targetHex": "#64748B",
+    "targetName": "Pewter",
+    "bestMix": {
+      "r": 39,
+      "g": 45,
+      "b": 54,
+      "hex": "#63738a",
+      "deltaE": 0.39454217056305413,
+      "score": 99.2
+    },
+    "achievable": true,
+    "maxPossibleScore": 99.2,
+    "minDeltaE": 0.39454217056305413,
+    "rgbDistance": 0.39215948730248307,
+    "hslDistance": 0.41563151203763893,
+    "notes": [
+      "🟤 Earth tone/brown - requires subtractive mixing"
+    ]
+  }
+]

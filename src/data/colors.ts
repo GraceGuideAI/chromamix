@@ -1,14 +1,18 @@
 /**
  * ChromaMix Custom Color Palette
  * 
- * A curated selection of 100 vibrant colors with unique names spanning the full spectrum.
- * Designed for optimal gameplay with good distribution across hue, saturation, and lightness.
+ * A curated selection of vibrant colors with unique names spanning the full spectrum.
+ * IMPROVED: Now includes achievability scoring to ensure all target colors can be
+ * matched using RGB additive mixing.
  */
+
+import chroma from 'chroma-js';
 
 export interface GameColor {
   hex: string;
   name: string;
   category: 'red' | 'orange' | 'yellow' | 'green' | 'cyan' | 'blue' | 'purple' | 'pink' | 'brown' | 'gray';
+  achievable?: boolean; // Whether this color can be achieved with RGB sliders
 }
 
 export const GAME_COLORS: GameColor[] = [
@@ -133,7 +137,89 @@ export const GAME_COLORS: GameColor[] = [
   { hex: '#64748B', name: 'Pewter', category: 'gray' },
 ];
 
-// Filter colors that are good for gameplay (not too dark, not too light)
+// ============================================================================
+// Color Achievability - Check if colors can be matched with RGB sliders
+// ============================================================================
+
+/**
+ * Calculate what the best achievable match is for a given target color
+ * using our RGB additive mixing system
+ */
+function calculateAchievability(targetHex: string): {
+  achievable: boolean;
+  bestScore: number;
+  optimalSliders: { r: number; g: number; b: number };
+} {
+  const targetRgb = chroma(targetHex).rgb();
+  
+  // For additive RGB mixing where each slider directly controls its channel:
+  // Optimal sliders = target RGB values scaled to 0-100
+  const optimalSliders = {
+    r: Math.round((targetRgb[0] / 255) * 100),
+    g: Math.round((targetRgb[1] / 255) * 100),
+    b: Math.round((targetRgb[2] / 255) * 100),
+  };
+  
+  // Mix the optimal sliders
+  const mixedR = Math.round((optimalSliders.r / 100) * 255);
+  const mixedG = Math.round((optimalSliders.g / 100) * 255);
+  const mixedB = Math.round((optimalSliders.b / 100) * 255);
+  const mixedHex = chroma(mixedR, mixedG, mixedB).hex();
+  
+  // Calculate CIEDE2000 difference
+  const deltaE = chroma.deltaE(targetHex, mixedHex);
+  
+  // Convert deltaE to score using our scoring curve
+  let score: number;
+  if (deltaE <= 0.5) {
+    score = 100 - (deltaE * 2);
+  } else if (deltaE <= 2) {
+    score = 99 - ((deltaE - 0.5) * 2.67);
+  } else if (deltaE <= 5) {
+    score = 95 - ((deltaE - 2) * 3.33);
+  } else {
+    score = 85 - ((deltaE - 5) * 3);
+  }
+  
+  score = Math.max(0, Math.min(100, score));
+  
+  return {
+    achievable: score >= 90, // Must be able to score 90+ to be considered achievable
+    bestScore: score,
+    optimalSliders,
+  };
+}
+
+// Pre-calculate achievability for all colors
+const COLORS_WITH_ACHIEVABILITY: (GameColor & { achievable: boolean; bestScore: number })[] = 
+  GAME_COLORS.map(color => {
+    const result = calculateAchievability(color.hex);
+    return {
+      ...color,
+      achievable: result.achievable,
+      bestScore: result.bestScore,
+    };
+  });
+
+// Filter to only achievable colors for gameplay
+export const ACHIEVABLE_COLORS: GameColor[] = COLORS_WITH_ACHIEVABILITY
+  .filter(c => c.achievable)
+  .map(({ bestScore, ...color }) => color);
+
+// Log warning if too many colors are filtered out
+const achievableCount = ACHIEVABLE_COLORS.length;
+const totalCount = GAME_COLORS.length;
+if (achievableCount < totalCount * 0.5) {
+  console.warn(`Warning: Only ${achievableCount}/${totalCount} colors are achievable. Consider adjusting the palette.`);
+}
+
+// ============================================================================
+// Color Filtering Functions
+// ============================================================================
+
+/**
+ * Filter colors that are good for gameplay (not too dark, not too light)
+ */
 export function getGameplayColors(): GameColor[] {
   return GAME_COLORS.filter(color => {
     const r = parseInt(color.hex.slice(1, 3), 16);
@@ -148,10 +234,42 @@ export function getGameplayColors(): GameColor[] {
 export const GAMEPLAY_COLORS: GameColor[] = getGameplayColors();
 
 /**
- * Get a random color from gameplay-suitable colors
+ * Get achievable gameplay colors (intersection of both filters)
+ * This is the primary color list for gameplay
+ */
+export function getAchievableGameColors(): GameColor[] {
+  return ACHIEVABLE_COLORS.filter(color => {
+    const r = parseInt(color.hex.slice(1, 3), 16);
+    const g = parseInt(color.hex.slice(3, 5), 16);
+    const b = parseInt(color.hex.slice(5, 7), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.08 && luminance < 0.92;
+  });
+}
+
+export const ACHIEVABLE_GAMEPLAY_COLORS: GameColor[] = getAchievableGameColors();
+
+// ============================================================================
+// Color Selection Functions
+// ============================================================================
+
+/**
+ * Get a random color from achievable gameplay-suitable colors
  */
 export function getRandomGameColor(): GameColor {
   const colors = GAMEPLAY_COLORS;
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
+/**
+ * Get a random color that is guaranteed achievable
+ */
+export function getAchievableRandomColor(): GameColor {
+  const colors = ACHIEVABLE_GAMEPLAY_COLORS;
+  if (colors.length === 0) {
+    // Fallback to gameplay colors if no achievable colors
+    return getRandomGameColor();
+  }
   return colors[Math.floor(Math.random() * colors.length)];
 }
 
@@ -160,6 +278,18 @@ export function getRandomGameColor(): GameColor {
  */
 export function getGameColorByIndex(index: number): GameColor {
   const colors = GAMEPLAY_COLORS;
+  const safeIndex = ((index % colors.length) + colors.length) % colors.length;
+  return colors[safeIndex];
+}
+
+/**
+ * Get an achievable color by index (for seeded/deterministic selection)
+ */
+export function getAchievableColorByIndex(index: number): GameColor {
+  const colors = ACHIEVABLE_GAMEPLAY_COLORS;
+  if (colors.length === 0) {
+    return getGameColorByIndex(index);
+  }
   const safeIndex = ((index % colors.length) + colors.length) % colors.length;
   return colors[safeIndex];
 }
@@ -182,6 +312,29 @@ export function getDailyGameColor(date: Date = new Date()): GameColor {
 }
 
 /**
+ * Get the daily color from achievable colors only
+ * Ensures players can always achieve a high score on daily challenges
+ */
+export function getAchievableDailyColor(date: Date = new Date()): GameColor {
+  const colors = ACHIEVABLE_GAMEPLAY_COLORS;
+  if (colors.length === 0) {
+    return getDailyGameColor(date);
+  }
+  
+  // Create a deterministic seed from the date
+  const dateStr = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  let seed = 0;
+  for (let i = 0; i < dateStr.length; i++) {
+    seed = ((seed << 5) - seed) + dateStr.charCodeAt(i);
+    seed = seed & seed; // Convert to 32-bit integer
+  }
+  
+  // Use the seed to pick a color
+  const index = Math.abs(seed) % colors.length;
+  return colors[index];
+}
+
+/**
  * Get all colors in a category
  */
 export function getColorsByCategory(category: GameColor['category']): GameColor[] {
@@ -189,12 +342,21 @@ export function getColorsByCategory(category: GameColor['category']): GameColor[
 }
 
 /**
+ * Get achievable colors in a category
+ */
+export function getAchievableColorsByCategory(category: GameColor['category']): GameColor[] {
+  return ACHIEVABLE_COLORS.filter(c => c.category === category);
+}
+
+/**
  * Total count of all colors
  */
 export const GAME_COLOR_COUNT = GAME_COLORS.length;
+export const ACHIEVABLE_COLOR_COUNT = ACHIEVABLE_COLORS.length;
 
-// ============ COLOR NAME MATCHING ============
-// Find closest color name for any hex value
+// ============================================================================
+// COLOR NAME MATCHING
+// ============================================================================
 
 // Convert hex to LAB for perceptual color matching
 function hexToLab(hex: string): { L: number; a: number; b: number } {
@@ -265,4 +427,37 @@ export function findClosestGameColor(hex: string): { color: GameColor; distance:
 export function getGameColorName(hex: string): string {
   const match = findClosestGameColor(hex);
   return match.color.name;
+}
+
+// ============================================================================
+// Debug/Dev Utilities
+// ============================================================================
+
+/**
+ * Get achievability stats for debugging
+ */
+export function getAchievabilityStats(): {
+  total: number;
+  achievable: number;
+  percentage: number;
+  byCategory: Record<string, { total: number; achievable: number }>;
+} {
+  const byCategory: Record<string, { total: number; achievable: number }> = {};
+  
+  for (const color of COLORS_WITH_ACHIEVABILITY) {
+    if (!byCategory[color.category]) {
+      byCategory[color.category] = { total: 0, achievable: 0 };
+    }
+    byCategory[color.category].total++;
+    if (color.achievable) {
+      byCategory[color.category].achievable++;
+    }
+  }
+  
+  return {
+    total: totalCount,
+    achievable: achievableCount,
+    percentage: Math.round((achievableCount / totalCount) * 100),
+    byCategory,
+  };
 }

@@ -195,6 +195,13 @@ interface GameState {
   stopTimer: () => void;
   tickTimer: () => void;
   
+  // Anti-exploit: submission cooldown and slider tracking
+  lastSubmitTime: number; // Timestamp of last submission
+  isSubmissionLocked: boolean; // Prevents rapid submissions
+  slidersHaveMoved: boolean; // Tracks if any slider moved this round
+  noMovementWarning: boolean; // Show warning for no-effort submissions
+  clearNoMovementWarning: () => void;
+  
   // Time extension system
   comboCount: number;
   maxCombo: number;
@@ -256,6 +263,14 @@ const useGameStore = create<GameState>((set, get) => ({
   rushRounds: 0,
   rushCombo: 0,
   rushMaxCombo: 0,
+  
+  // Anti-exploit state
+  lastSubmitTime: 0,
+  isSubmissionLocked: false,
+  slidersHaveMoved: false,
+  noMovementWarning: false,
+  
+  clearNoMovementWarning: () => set({ noMovementWarning: false }),
   
   // Time extension system state
   comboCount: 0,
@@ -358,6 +373,11 @@ const useGameStore = create<GameState>((set, get) => ({
         rushCombo: 0,
         rushMaxCombo: 0,
         currentScore: 0,
+        // Initialize anti-exploit state
+        lastSubmitTime: 0,
+        isSubmissionLocked: false,
+        slidersHaveMoved: false,
+        noMovementWarning: false,
         // Initialize time extension system
         comboCount: 0,
         maxCombo: 0,
@@ -379,10 +399,15 @@ const useGameStore = create<GameState>((set, get) => ({
   },
   
   updateSlider: (id, amount) => {
+    const clampedAmount = Math.max(0, Math.min(100, amount));
     set((state) => ({
       sliders: state.sliders.map(s => 
-        s.id === id ? { ...s, amount: Math.max(0, Math.min(100, amount)) } : s
+        s.id === id ? { ...s, amount: clampedAmount } : s
       ),
+      // Track that sliders have been moved (any non-zero value)
+      slidersHaveMoved: state.slidersHaveMoved || clampedAmount > 0,
+      // Clear any no-movement warning when player moves sliders
+      noMovementWarning: false,
     }));
     get().updateMix();
   },
@@ -406,8 +431,48 @@ const useGameStore = create<GameState>((set, get) => ({
   submitMix: () => {
     const state = get();
     const { currentMix, targetColor, mode, persistentData, rushCombo, rushScore, rushRounds } = state;
+    const now = Date.now();
+    
+    // ANTI-EXPLOIT: Check submission cooldown (1000ms minimum between submissions in Rush mode)
+    const SUBMISSION_COOLDOWN_MS = 1000;
+    if (mode === 'rush' && state.isSubmissionLocked) {
+      // Silently ignore rapid submissions during lockout
+      return;
+    }
+    if (mode === 'rush' && (now - state.lastSubmitTime) < SUBMISSION_COOLDOWN_MS) {
+      // Too fast - ignore submission
+      return;
+    }
+    
+    // ANTI-EXPLOIT: Check if sliders have moved from starting position in Rush mode
+    const totalSliderMovement = state.sliders.reduce((sum, s) => sum + s.amount, 0);
+    const slidersActuallyMoved = totalSliderMovement > 0;
+    
+    if (mode === 'rush' && state.isTimerRunning && !slidersActuallyMoved) {
+      // Player tried to submit without moving any sliders - show warning, apply penalty
+      set({ 
+        noMovementWarning: true,
+        // Reset combo for no-effort submission
+        comboCount: 0,
+        rushCombo: 0,
+      });
+      // Auto-clear warning after 1.5 seconds
+      setTimeout(() => {
+        get().clearNoMovementWarning();
+      }, 1500);
+      // Don't process the submission - no points, no round advance
+      return;
+    }
+    
     const scoreResult = calculateColorScore(currentMix, targetColor.hex);
-    const score = scoreResult.score;
+    let score = scoreResult.score;
+    
+    // ANTI-EXPLOIT: Heavy penalty for very low effort (black mix #000000)
+    // If mix is still pure black and target isn't very dark, player isn't trying
+    if (mode === 'rush' && currentMix === '#000000') {
+      score = 0; // Zero points for black submission
+    }
+    
     const today = getTodayString();
     
     // Helper to unlock achievement
@@ -487,8 +552,20 @@ const useGameStore = create<GameState>((set, get) => ({
       });
       
     } else if (mode === 'rush') {
+      // Guard: prevent submissions if game is over (timer stopped or at 0)
+      const { isTimerRunning, timeRemaining: currentTime } = get();
+      if (!isTimerRunning || currentTime <= 0) {
+        // Game is over, don't process this submission
+        return;
+      }
+      
+      // ANTI-EXPLOIT: Lock submissions during round transition
+      set({ 
+        isSubmissionLocked: true,
+        lastSubmitTime: now,
+      });
+      
       // Rush mode scoring with combo and time extension system
-      const now = Date.now();
       const timeSinceLastRound = state.lastRoundTime > 0 ? now - state.lastRoundTime : 0;
       const currentCombo = state.comboCount;
       
@@ -581,7 +658,13 @@ const useGameStore = create<GameState>((set, get) => ({
             sliders: [...DEFAULT_SLIDERS],
             currentMix: '#000000',
             currentScore: 0,
+            // ANTI-EXPLOIT: Reset slider tracking for new round and unlock submissions
+            slidersHaveMoved: false,
+            isSubmissionLocked: false,
           });
+        } else {
+          // Game ended during transition - just unlock
+          set({ isSubmissionLocked: false });
         }
       }, 800);
       
@@ -649,6 +732,11 @@ const useGameStore = create<GameState>((set, get) => ({
         rushRounds: 0,
         rushCombo: 0,
         rushMaxCombo: 0,
+        // Reset anti-exploit state for new game
+        lastSubmitTime: 0,
+        isSubmissionLocked: false,
+        slidersHaveMoved: false,
+        noMovementWarning: false,
         // Reset time extension system for new game
         comboCount: 0,
         maxCombo: 0,
@@ -676,6 +764,11 @@ const useGameStore = create<GameState>((set, get) => ({
       rushRounds: 0,
       rushCombo: 0,
       rushMaxCombo: 0,
+      // Reset anti-exploit state
+      lastSubmitTime: 0,
+      isSubmissionLocked: false,
+      slidersHaveMoved: false,
+      noMovementWarning: false,
       // Reset time extension system
       comboCount: 0,
       maxCombo: 0,
@@ -691,8 +784,12 @@ const useGameStore = create<GameState>((set, get) => ({
   },
   
   addTime: (seconds: number) => {
+    // Only add time if timer is still running (prevents adding time after game ends)
+    const { isTimerRunning } = get();
+    if (!isTimerRunning) return;
+    
     set((state) => ({
-      timeRemaining: state.timeRemaining + seconds,
+      timeRemaining: Math.max(0, state.timeRemaining + seconds),
     }));
   },
   
@@ -723,12 +820,21 @@ const useGameStore = create<GameState>((set, get) => ({
   tickTimer: () => {
     const { timeRemaining, isTimerRunning } = get();
     
-    if (isTimerRunning && timeRemaining > 0) {
-      set({ timeRemaining: timeRemaining - 1 });
-      
-      if (timeRemaining - 1 <= 0) {
+    // Guard: don't tick if not running or already at 0
+    if (!isTimerRunning || timeRemaining <= 0) {
+      // If timer was running but hit 0, ensure it stops
+      if (isTimerRunning && timeRemaining <= 0) {
         get().stopTimer();
       }
+      return;
+    }
+    
+    const newTime = Math.max(0, timeRemaining - 1);
+    set({ timeRemaining: newTime });
+    
+    // Stop timer when we hit 0
+    if (newTime <= 0) {
+      get().stopTimer();
     }
   },
   
