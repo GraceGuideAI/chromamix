@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Share2, X, Clock, Zap, Target, Flame } from 'lucide-react';
 import useGameStore, { getScoreLabel, getScoreLabelColor, getTimeUntilNewDaily } from '@/store/gameStore';
 import { getColorName } from '@/utils/colorPhysics';
+import { getPTSColorName } from '@/data/ptsColors';
 import confetti from 'canvas-confetti';
 
 // Accessible slider component with enhanced tactile feedback
@@ -76,20 +77,20 @@ function AccessibleSlider({ id, label, value, baseColor, onChange, disabled = fa
 
   return (
     <div 
-      className={`slider-container bg-white/10 backdrop-blur-sm rounded-2xl p-4 space-y-3 transition-all duration-200 ${
-        isFocused ? 'ring-2 ring-white ring-offset-2 ring-offset-transparent' : ''
-      } ${isDragging ? 'scale-[1.02]' : ''} ${disabled ? 'opacity-50' : ''}`}
+      className={`slider-container bg-white/10 backdrop-blur-sm rounded-xl p-2 sm:p-3 space-y-1 transition-all duration-200 ${
+        isFocused ? 'ring-2 ring-white ring-offset-1 ring-offset-transparent' : ''
+      } ${isDragging ? 'scale-[1.01]' : ''} ${disabled ? 'opacity-50' : ''}`}
     >
       <div className="flex justify-between items-center">
         <label 
           htmlFor={`slider-${id}`}
-          className="text-white font-semibold text-lg"
+          className="text-white font-semibold text-sm sm:text-base"
         >
           {label}
         </label>
         <output 
           htmlFor={`slider-${id}`}
-          className="text-white/90 font-mono text-lg tabular-nums min-w-[4ch] text-right"
+          className="text-white/90 font-mono text-sm sm:text-base tabular-nums min-w-[4ch] text-right"
           aria-live="polite"
           aria-atomic="true"
         >
@@ -101,7 +102,7 @@ function AccessibleSlider({ id, label, value, baseColor, onChange, disabled = fa
       <div className="relative slider-track-container">
         {/* Background track - darker for white slider visibility */}
         <div 
-          className={`absolute inset-0 rounded-full h-3 ${
+          className={`absolute inset-0 rounded-full h-2 sm:h-3 ${
             isWhiteSlider ? 'bg-gray-500/50' : 'bg-white/20'
           }`}
           style={{ top: '50%', transform: 'translateY(-50%)' }}
@@ -110,8 +111,8 @@ function AccessibleSlider({ id, label, value, baseColor, onChange, disabled = fa
         
         {/* Filled portion - white slider gets border for visibility */}
         <div 
-          className={`absolute h-3 rounded-full transition-all duration-75 ${
-            isWhiteSlider ? 'border-2 border-gray-400' : ''
+          className={`absolute h-2 sm:h-3 rounded-full transition-all duration-75 ${
+            isWhiteSlider ? 'border border-gray-400 sm:border-2' : ''
           }`}
           style={{ 
             top: '50%',
@@ -129,21 +130,7 @@ function AccessibleSlider({ id, label, value, baseColor, onChange, disabled = fa
           aria-hidden="true"
         />
         
-        {/* Tick marks for orientation */}
-        <div 
-          className="absolute inset-0 flex justify-between px-1 pointer-events-none h-3"
-          style={{ top: '50%', transform: 'translateY(-50%)' }}
-          aria-hidden="true"
-        >
-          {[0, 25, 50, 75, 100].map((tick) => (
-            <div 
-              key={tick}
-              className={`w-0.5 h-full ${value >= tick ? 'bg-white/40' : 'bg-white/20'}`}
-            />
-          ))}
-        </div>
-        
-        {/* Actual input */}
+        {/* Actual input - tick marks removed for cleaner mobile UI */}
         <input
           id={`slider-${id}`}
           type="range"
@@ -171,10 +158,10 @@ function AccessibleSlider({ id, label, value, baseColor, onChange, disabled = fa
         />
       </div>
       
-      {/* Keyboard hint (visible on focus) */}
+      {/* Keyboard hint - hidden on mobile, visible on focus for desktop */}
       {!disabled && (
         <div 
-          className={`text-xs text-white/50 transition-opacity duration-200 ${
+          className={`hidden sm:block text-xs text-white/50 transition-opacity duration-200 ${
             isFocused ? 'opacity-100' : 'opacity-0'
           }`}
           aria-hidden="true"
@@ -216,6 +203,13 @@ export default function MixingBoard() {
     // Share
     shareResults,
   } = useGameStore();
+
+  // Get the detected PTS color name for the user's mix
+  const mixColorName = getPTSColorName(currentMix);
+  
+  // Target color name from PTS catalog
+  const targetColorName = targetColor.name;
+  const targetColorHex = targetColor.hex;
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [countdown, setCountdown] = useState(getTimeUntilNewDaily());
@@ -399,7 +393,7 @@ export default function MixingBoard() {
 
   return (
     <div 
-      className="w-full max-w-4xl mx-auto px-4 py-6 space-y-6 relative"
+      className="w-full max-w-4xl mx-auto px-3 sm:px-4 py-2 sm:py-4 space-y-2 sm:space-y-4 relative"
       role="main"
       aria-label="Color mixing game board"
     >
@@ -471,61 +465,56 @@ export default function MixingBoard() {
         )}
       </AnimatePresence>
 
-      {/* Rush Mode Header */}
+      {/* Rush Mode Header - Compact inline layout */}
       {mode === 'rush' && (
         <motion.section
-          className="space-y-3"
+          className="space-y-2"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           aria-labelledby="rush-mode-title"
         >
           <h2 id="rush-mode-title" className="sr-only">Rush Mode</h2>
           
-          {/* Timer */}
+          {/* Compact Rush Stats Bar with Timer */}
           <div 
-            className="text-center"
-            role="timer"
-            aria-label={`Time remaining: ${timeRemaining} seconds`}
-          >
-            <div 
-              className={`text-5xl font-bold tabular-nums ${timeRemaining < 10 ? 'text-red-500 animate-pulse' : 'text-white'}`}
-              aria-hidden="true"
-            >
-              {timeRemaining}s
-            </div>
-            <span className="sr-only">{timeRemaining} seconds remaining</span>
-          </div>
-          
-          {/* Rush Stats Bar */}
-          <div 
-            className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 grid grid-cols-3 gap-4"
+            className="bg-white/10 backdrop-blur-sm rounded-xl p-2 sm:p-3 flex items-center justify-between"
             role="group"
             aria-label="Rush mode statistics"
           >
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-orange-400">
-                <Zap size={18} aria-hidden="true" />
-                <span className="text-2xl font-bold tabular-nums">{rushScore}</span>
-              </div>
-              <div className="text-xs text-white/60 uppercase">Score</div>
+            {/* Timer - prominent but compact */}
+            <div 
+              className="flex items-center gap-1"
+              role="timer"
+              aria-label={`Time remaining: ${timeRemaining} seconds`}
+            >
+              <Clock size={16} className="text-white/60" aria-hidden="true" />
+              <span 
+                className={`text-2xl sm:text-3xl font-bold tabular-nums ${timeRemaining < 10 ? 'text-red-500 animate-pulse' : 'text-white'}`}
+                aria-hidden="true"
+              >
+                {timeRemaining}s
+              </span>
+              <span className="sr-only">{timeRemaining} seconds remaining</span>
             </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-blue-400">
-                <Target size={18} aria-hidden="true" />
-                <span className="text-2xl font-bold tabular-nums">{rushRounds}</span>
+            
+            {/* Stats inline */}
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="flex items-center gap-1 text-orange-400">
+                <Zap size={14} aria-hidden="true" />
+                <span className="text-lg sm:text-xl font-bold tabular-nums">{rushScore}</span>
               </div>
-              <div className="text-xs text-white/60 uppercase">Rounds</div>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-purple-400">
-                <Flame size={18} aria-hidden="true" />
-                <span className="text-2xl font-bold tabular-nums">{rushCombo}x</span>
+              <div className="flex items-center gap-1 text-blue-400">
+                <Target size={14} aria-hidden="true" />
+                <span className="text-lg sm:text-xl font-bold tabular-nums">{rushRounds}</span>
               </div>
-              <div className="text-xs text-white/60 uppercase">Combo</div>
+              <div className="flex items-center gap-1 text-purple-400">
+                <Flame size={14} aria-hidden="true" />
+                <span className="text-lg sm:text-xl font-bold tabular-nums">{rushCombo}x</span>
+              </div>
             </div>
           </div>
           
-          {/* Combo Indicator */}
+          {/* Combo Indicator - inline badge when active */}
           {rushCombo >= 2 && isTimerRunning && (
             <motion.div
               initial={{ scale: 0 }}
@@ -534,7 +523,7 @@ export default function MixingBoard() {
               role="status"
               aria-live="polite"
             >
-              <span className={`inline-block px-4 py-1 rounded-full font-bold text-lg ${
+              <span className={`inline-block px-3 py-0.5 rounded-full font-bold text-sm ${
                 rushCombo >= 5 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white animate-pulse' :
                 rushCombo >= 3 ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' :
                 'bg-blue-500/50 text-white'
@@ -550,7 +539,7 @@ export default function MixingBoard() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleStartRush}
-              className="game-button w-full bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold py-4 rounded-2xl shadow-xl text-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-orange-900"
+              className="game-button w-full bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold py-3 rounded-xl shadow-xl text-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-orange-900"
               aria-label="Start Rush Mode - 60 seconds to match as many colors as possible"
             >
               <span aria-hidden="true">⚡</span> Start Rush Mode!
@@ -559,101 +548,92 @@ export default function MixingBoard() {
         </motion.section>
       )}
 
-      {/* Daily Mode Header */}
+      {/* Daily Mode Header - Compact single row */}
       {mode === 'daily' && (
         <motion.section
-          initial={{ y: -20, opacity: 0 }}
+          initial={{ y: -10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 space-y-3"
+          className="bg-white/10 backdrop-blur-sm rounded-xl p-2 sm:p-3"
           aria-labelledby="daily-mode-title"
         >
-          <div className="flex justify-between items-center">
-            <div>
-              <h2 id="daily-mode-title" className="text-sm text-white/60 uppercase tracking-wide">
-                Daily Challenge
-              </h2>
-              <div className="text-2xl font-bold text-white">
-                {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-              </div>
-            </div>
-            {currentStreak > 0 && (
-              <div className="text-right" role="status" aria-label={`${currentStreak} day streak`}>
-                <div className="flex items-center gap-1 text-orange-400">
-                  <Flame size={20} aria-hidden="true" />
-                  <span className="text-2xl font-bold tabular-nums">{currentStreak}</span>
+          <div className="flex justify-between items-center gap-2">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div>
+                <h2 id="daily-mode-title" className="text-xs text-white/60 uppercase tracking-wide">
+                  Daily
+                </h2>
+                <div className="text-lg sm:text-xl font-bold text-white">
+                  {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </div>
-                <div className="text-xs text-white/60">day streak</div>
               </div>
-            )}
-          </div>
-          
-          {/* Daily Stats */}
-          <div className="flex gap-4 text-sm" role="group" aria-label="Daily challenge statistics">
-            <div className="text-white/70">
-              Attempts: <span className="text-white font-bold tabular-nums">{dailyAttempts}</span>
+              {/* Daily Stats inline */}
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-white/70">
+                <span>#{dailyAttempts}</span>
+                {dailyBestScore > 0 && <span>Best: {dailyBestScore}</span>}
+                {dailyCompleted && <span className="text-green-400">✓</span>}
+              </div>
             </div>
-            {dailyBestScore > 0 && (
-              <div className="text-white/70">
-                Best: <span className="text-white font-bold tabular-nums">{dailyBestScore}</span>
+            
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Countdown */}
+              <div className="flex items-center gap-1 text-white/50 text-xs">
+                <Clock size={12} aria-hidden="true" />
+                <span>{countdown.hours}h {countdown.minutes}m</span>
               </div>
-            )}
-            {dailyCompleted && (
-              <div className="text-green-400 font-bold" role="status">
-                <span aria-hidden="true">✓</span> Completed
-              </div>
-            )}
-          </div>
-          
-          {/* Countdown Timer */}
-          <div className="flex items-center gap-2 text-white/60 text-sm">
-            <Clock size={14} aria-hidden="true" />
-            <span>New color in {countdown.hours}h {countdown.minutes}m</span>
+              {/* Streak */}
+              {currentStreak > 0 && (
+                <div className="flex items-center gap-1 text-orange-400" role="status" aria-label={`${currentStreak} day streak`}>
+                  <Flame size={16} aria-hidden="true" />
+                  <span className="text-lg font-bold tabular-nums">{currentStreak}</span>
+                </div>
+              )}
+            </div>
           </div>
         </motion.section>
       )}
 
-      {/* Rush Mode Game Over */}
+      {/* Rush Mode Game Over - Compact */}
       {mode === 'rush' && !isTimerRunning && timeRemaining === 0 && (
         <motion.section
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-6 text-center space-y-4"
+          className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-4 text-center space-y-3"
           aria-labelledby="game-over-title"
           role="region"
         >
-          <h2 id="game-over-title" className="text-2xl font-bold text-white">
+          <h2 id="game-over-title" className="text-xl font-bold text-white">
             <span aria-hidden="true">⏱️</span> Time&apos;s Up!
           </h2>
-          <div className="grid grid-cols-3 gap-4" role="group" aria-label="Final statistics">
+          <div className="grid grid-cols-3 gap-2" role="group" aria-label="Final statistics">
             <div>
-              <div className="text-4xl font-bold text-white tabular-nums">{rushScore}</div>
-              <div className="text-sm text-white/70">Final Score</div>
+              <div className="text-3xl font-bold text-white tabular-nums">{rushScore}</div>
+              <div className="text-xs text-white/70">Score</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-white tabular-nums">{rushRounds}</div>
-              <div className="text-sm text-white/70">Rounds</div>
+              <div className="text-3xl font-bold text-white tabular-nums">{rushRounds}</div>
+              <div className="text-xs text-white/70">Rounds</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-white tabular-nums">{rushMaxCombo}x</div>
-              <div className="text-sm text-white/70">Best Combo</div>
+              <div className="text-3xl font-bold text-white tabular-nums">{rushMaxCombo}x</div>
+              <div className="text-xs text-white/70">Combo</div>
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleShare}
-              className="game-button flex-1 bg-white/20 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white"
+              className="game-button flex-1 bg-white/20 text-white font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white"
               aria-label="Share your results"
             >
-              <Share2 size={20} aria-hidden="true" />
+              <Share2 size={18} aria-hidden="true" />
               Share
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleNewRound}
-              className="game-button flex-1 bg-white text-purple-600 font-bold py-3 px-4 rounded-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-purple-300"
+              className="game-button flex-1 bg-white text-purple-600 font-bold py-2.5 px-3 rounded-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-purple-300"
               aria-label="Play another round of Rush Mode"
             >
               Play Again
@@ -665,64 +645,73 @@ export default function MixingBoard() {
       {/* Hide game UI when rush mode ended */}
       {!(mode === 'rush' && !isTimerRunning && timeRemaining === 0) && (
         <>
-          {/* Side-by-side color comparison */}
+          {/* Side-by-side color comparison - Always horizontal */}
           <div 
-            className="color-comparison grid grid-cols-1 md:grid-cols-2 gap-4"
+            className="color-comparison grid grid-cols-2 gap-2 sm:gap-4"
             role="group"
             aria-label="Color comparison: target versus your mix"
           >
             {/* Target Color Display */}
             <motion.div
-              initial={{ y: -20, opacity: 0 }}
+              initial={{ y: -10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="bg-white/10 backdrop-blur-sm rounded-3xl p-4 md:p-6 space-y-3"
+              className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-4 space-y-1 sm:space-y-2"
             >
               <h2 
                 id="target-color-heading"
-                className="text-center text-sm font-medium text-white/60 uppercase tracking-wide"
+                className="text-center text-xs sm:text-sm font-medium text-white/60 uppercase tracking-wide"
               >
-                Target Color
+                Target
               </h2>
               <div 
-                className="color-swatch w-full h-24 md:h-32 rounded-2xl shadow-2xl border-4 border-white/20 flex items-center justify-center"
-                style={{ backgroundColor: targetColor }}
+                className="color-swatch relative w-full h-20 sm:h-28 md:h-32 rounded-xl shadow-xl border-2 sm:border-4 border-white/20 flex items-center justify-center overflow-hidden"
+                style={{ backgroundColor: targetColorHex }}
                 role="img"
-                aria-label={`Target color: ${getColorName(targetColor)}`}
+                aria-label={`Target color: ${targetColorName}`}
               >
-                {/* High contrast mode: show color name inside swatch */}
-                <span 
-                  className="hidden high-contrast:block font-bold text-lg px-2 py-1 rounded"
+                {/* Premium PTS color name displayed on swatch */}
+                <motion.div 
+                  key={targetColorName}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-center px-2 py-1 rounded-md"
                   style={{ 
-                    color: getContrastColor(targetColor),
-                    backgroundColor: `${getContrastColor(targetColor)}22`
+                    color: getContrastColor(targetColorHex),
+                    backgroundColor: `${getContrastColor(targetColorHex)}12`,
+                    textShadow: getContrastColor(targetColorHex) === '#ffffff' 
+                      ? '0 1px 4px rgba(0,0,0,0.6)' 
+                      : '0 1px 4px rgba(255,255,255,0.4)'
                   }}
-                  aria-hidden="true"
                 >
-                  {getColorName(targetColor)}
-                </span>
+                  <div className="text-sm sm:text-lg md:text-xl font-bold tracking-wide leading-tight">
+                    {targetColorName}
+                  </div>
+                </motion.div>
               </div>
-              <div className="text-center text-lg font-semibold text-white">
-                {getColorName(targetColor)}
+              {/* Hex code shown below */}
+              <div className="text-center text-[10px] sm:text-xs font-mono text-white/40 tracking-wider">
+                {targetColorHex.toUpperCase()}
               </div>
             </motion.div>
 
             {/* Color Mixing Canvas */}
             <motion.div
-              initial={{ y: -20, opacity: 0 }}
+              initial={{ y: -10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white/10 backdrop-blur-sm rounded-3xl p-4 md:p-6 space-y-3"
+              transition={{ delay: 0.05 }}
+              className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-4 space-y-1 sm:space-y-2"
             >
               <h2 
                 id="mix-color-heading"
-                className="text-center text-sm font-medium text-white/60 uppercase tracking-wide"
+                className="text-center text-xs sm:text-sm font-medium text-white/60 uppercase tracking-wide"
               >
                 Your Mix
               </h2>
               <div 
-                className="color-swatch relative w-full h-24 md:h-32 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20"
+                className="color-swatch relative w-full h-20 sm:h-28 md:h-32 rounded-xl overflow-hidden shadow-xl border-2 sm:border-4 border-white/20"
                 role="img"
-                aria-label={`Your mixed color: ${getColorName(currentMix)}`}
+                aria-label={`Your mixed color: ${mixColorName}`}
               >
                 <canvas
                   ref={canvasRef}
@@ -731,39 +720,47 @@ export default function MixingBoard() {
                   className="w-full h-full"
                   aria-hidden="true"
                 />
-                {/* High contrast fallback */}
+                {/* Detected color name overlay */}
                 <div 
-                  className="absolute inset-0 hidden high-contrast:flex items-center justify-center"
-                  style={{ backgroundColor: currentMix }}
+                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
                 >
-                  <span 
-                    className="font-bold text-lg px-2 py-1 rounded"
+                  <motion.div 
+                    key={mixColorName}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                    className="text-center px-2 py-1 rounded-md"
                     style={{ 
                       color: getContrastColor(currentMix),
-                      backgroundColor: `${getContrastColor(currentMix)}22`
+                      backgroundColor: `${getContrastColor(currentMix)}12`,
+                      textShadow: getContrastColor(currentMix) === '#ffffff' 
+                        ? '0 1px 4px rgba(0,0,0,0.6)' 
+                        : '0 1px 4px rgba(255,255,255,0.4)'
                     }}
-                    aria-hidden="true"
                   >
-                    {getColorName(currentMix)}
-                  </span>
+                    <div className="text-sm sm:text-lg md:text-xl font-bold tracking-wide leading-tight">
+                      {mixColorName}
+                    </div>
+                  </motion.div>
                 </div>
               </div>
+              {/* Hex code shown below */}
               <div 
-                className="text-center text-lg font-semibold text-white"
+                className="text-center text-[10px] sm:text-xs font-mono text-white/40 tracking-wider"
                 aria-live="polite"
                 aria-atomic="true"
               >
-                {getColorName(currentMix)}
+                {currentMix.toUpperCase()}
               </div>
             </motion.div>
           </div>
 
-          {/* Color Sliders */}
+          {/* Color Sliders - Compact grid on mobile */}
           <motion.fieldset
-            initial={{ y: 20, opacity: 0 }}
+            initial={{ y: 10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="space-y-4 border-0 p-0 m-0"
+            transition={{ delay: 0.1 }}
+            className="space-y-1.5 sm:space-y-2 border-0 p-0 m-0"
           >
             <legend className="sr-only">
               Color mixing sliders - adjust Red, Yellow, Blue, and White to match the target color
@@ -772,9 +769,9 @@ export default function MixingBoard() {
             {sliders.map((slider, idx) => (
               <motion.div
                 key={slider.id}
-                initial={{ x: -20, opacity: 0 }}
+                initial={{ x: -10, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.3 + idx * 0.1 }}
+                transition={{ delay: 0.15 + idx * 0.05 }}
               >
                 <AccessibleSlider
                   id={slider.id}
@@ -788,60 +785,47 @@ export default function MixingBoard() {
             ))}
           </motion.fieldset>
 
-          {/* Score Display with Label */}
+          {/* Score Display with Label - Compact horizontal layout */}
           <AnimatePresence>
             {currentScore > 0 && (
               <motion.div
-                initial={{ scale: 0, rotate: -10 }}
-                animate={{ scale: 1, rotate: 0 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{ type: 'spring', stiffness: 200 }}
-                className={`score-display text-center bg-gradient-to-r ${scoreLabelColor} rounded-2xl p-6 shadow-2xl`}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+                className={`score-display bg-gradient-to-r ${scoreLabelColor} rounded-xl p-3 sm:p-4 shadow-xl flex items-center justify-between`}
                 role="status"
                 aria-live="polite"
                 aria-atomic="true"
                 aria-label={`${scoreLabel}! Match score: ${currentScore} out of 100`}
               >
-                {/* Score Label */}
-                <motion.div
-                  initial={{ y: -10, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-3xl font-black text-white mb-2"
-                  aria-hidden="true"
-                >
-                  {scoreLabel}
-                </motion.div>
-                
-                <div className="text-sm font-medium text-white/80 uppercase tracking-wide mb-2">
-                  Match Score
+                <div className="flex items-center gap-2 sm:gap-3">
+                  {/* Emoji */}
+                  <span className="text-2xl sm:text-3xl" aria-hidden="true">
+                    {currentScore >= 95 ? '🏆' : 
+                     currentScore >= 90 ? '✨' : 
+                     currentScore >= 80 ? '🎯' : 
+                     currentScore >= 60 ? '👀' : '🤔'}
+                  </span>
+                  {/* Score Label */}
+                  <div className="text-xl sm:text-2xl font-black text-white" aria-hidden="true">
+                    {scoreLabel}
+                  </div>
                 </div>
-                <div className="text-5xl font-bold text-white tabular-nums">
+                
+                {/* Score number */}
+                <div className="text-3xl sm:text-4xl font-bold text-white tabular-nums">
                   <span aria-hidden="true">{currentScore}</span>
-                  <span className="text-2xl" aria-hidden="true">/100</span>
+                  <span className="text-lg sm:text-xl text-white/70" aria-hidden="true">/100</span>
                   <span className="sr-only">{currentScore} out of 100</span>
                 </div>
-                
-                {/* Emoji feedback based on score */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="mt-3 text-2xl"
-                  aria-hidden="true"
-                >
-                  {currentScore >= 95 ? '🎨✨🏆' : 
-                   currentScore >= 90 ? '🎨✨' : 
-                   currentScore >= 80 ? '🎯👍' : 
-                   currentScore >= 60 ? '👀' : '🤔'}
-                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Action Buttons */}
+          {/* Action Buttons - Compact horizontal layout */}
           <div 
-            className="flex flex-col sm:flex-row gap-3"
+            className="flex gap-2 sm:gap-3"
             role="group"
             aria-label="Game actions"
           >
@@ -851,7 +835,7 @@ export default function MixingBoard() {
                 whileTap={{ scale: 0.98 }}
                 onClick={handleSubmit}
                 disabled={timeRemaining === 0}
-                className="game-button flex-1 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold py-4 px-6 rounded-2xl shadow-xl disabled:opacity-50 disabled:cursor-not-allowed text-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-orange-900"
+                className="game-button flex-1 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold py-3 px-4 rounded-xl shadow-xl disabled:opacity-50 disabled:cursor-not-allowed text-base sm:text-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-orange-900"
                 aria-label="Submit your color mix and get next target"
               >
                 Submit & Next <span aria-hidden="true">→</span>
@@ -862,7 +846,7 @@ export default function MixingBoard() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleSubmit}
-                  className="game-button flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-4 px-6 rounded-2xl shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-purple-900"
+                  className="game-button flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 px-4 rounded-xl shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-purple-900"
                   aria-label="Check how well your mix matches the target color"
                 >
                   Check Match
@@ -873,10 +857,10 @@ export default function MixingBoard() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleShare}
-                    className="game-button bg-white/20 backdrop-blur-sm text-white font-bold py-4 px-6 rounded-2xl shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white"
+                    className="game-button bg-white/20 backdrop-blur-sm text-white font-bold py-3 px-4 rounded-xl shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white"
                     aria-label="Share your daily challenge results"
                   >
-                    <Share2 size={24} aria-hidden="true" />
+                    <Share2 size={20} aria-hidden="true" />
                     <span className="sr-only">Share results</span>
                   </motion.button>
                 )}
@@ -886,7 +870,7 @@ export default function MixingBoard() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleNewRound}
-                    className="game-button flex-1 bg-white/20 backdrop-blur-sm text-white font-bold py-4 px-6 rounded-2xl shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white"
+                    className="game-button flex-1 bg-white/20 backdrop-blur-sm text-white font-bold py-3 px-4 rounded-xl shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white"
                     aria-label="Start a new round with a different target color"
                   >
                     New Round

@@ -3,7 +3,8 @@ import {
   mixColorsSubtractive, 
   calculateColorScore, 
   generateRandomColor,
-  getDailyTargetColor 
+  getDailyTargetColor,
+  type TargetColor,
 } from '@/utils/colorPhysics';
 
 export type GameMode = 'menu' | 'daily' | 'rush';
@@ -154,8 +155,8 @@ interface GameState {
   mode: GameMode;
   setMode: (mode: GameMode) => void;
   
-  // Target color
-  targetColor: string;
+  // Target color (now includes name from PTS catalog)
+  targetColor: TargetColor;
   
   // Color sliders
   sliders: ColorSlider[];
@@ -358,7 +359,7 @@ const useGameStore = create<GameState>((set, get) => ({
   submitMix: () => {
     const state = get();
     const { currentMix, targetColor, mode, persistentData, rushCombo, rushScore, rushRounds } = state;
-    const scoreResult = calculateColorScore(currentMix, targetColor);
+    const scoreResult = calculateColorScore(currentMix, targetColor.hex);
     const score = scoreResult.score;
     const today = getTodayString();
     
@@ -613,7 +614,7 @@ const useGameStore = create<GameState>((set, get) => ({
   
   // Share functionality
   generateShareText: () => {
-    const { mode, dailyBestScore, dailyAttempts, rushScore, rushRounds, rushMaxCombo, currentStreak } = get();
+    const { mode, dailyBestScore, dailyAttempts, rushScore, rushRounds, rushMaxCombo, currentStreak, targetColor } = get();
     const today = new Date();
     const dateStr = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
     
@@ -622,6 +623,7 @@ const useGameStore = create<GameState>((set, get) => ({
       const squares = getScoreSquares(dailyBestScore);
       
       return `🎨 ChromaMix Daily ${dateStr}
+🚗 Porsche PTS: ${targetColor.name}
 
 ${squares}
 

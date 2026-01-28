@@ -87,11 +87,11 @@ export default function GameModes() {
       title: 'Daily Target',
       description: dailyCompleted 
         ? `Completed! Score: ${dailyBestScore}` 
-        : 'Same color challenge for everyone today',
+        : 'Match today\'s Porsche PTS color',
       icon: Calendar,
       gradient: 'from-blue-500 to-cyan-500',
       badge: dailyCompleted ? '✓' : null,
-      subtitle: `New in ${countdown.hours}h ${countdown.minutes}m`,
+      subtitle: `🚗 New PTS color in ${countdown.hours}h ${countdown.minutes}m`,
       shortcut: '1',
     },
     {
@@ -99,7 +99,7 @@ export default function GameModes() {
       title: 'Rush Mode',
       description: rushHighScore > 0 
         ? `High Score: ${rushHighScore}` 
-        : '60 seconds to match as many colors as possible',
+        : '60 seconds to match PTS colors',
       icon: Zap,
       gradient: 'from-orange-500 to-red-500',
       badge: null,
@@ -131,7 +131,7 @@ export default function GameModes() {
 
   return (
     <div 
-      className="w-full max-w-2xl mx-auto px-4 py-12 space-y-8"
+      className="w-full max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-6"
       role="main"
       aria-labelledby="game-title"
     >
@@ -150,125 +150,112 @@ export default function GameModes() {
         Game mode selection
       </div>
 
-      {/* Logo / Title */}
+      {/* Logo / Title - Compact */}
       <motion.header
-        initial={{ y: -30, opacity: 0 }}
+        initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="text-center space-y-3"
+        className="text-center space-y-1 sm:space-y-2"
       >
         <h1 
           id="game-title"
           ref={headingRef}
           tabIndex={-1}
-          className="text-5xl sm:text-6xl font-black text-white tracking-tight focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-purple-900 rounded-lg"
+          className="text-4xl sm:text-5xl font-black text-white tracking-tight focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-purple-900 rounded-lg"
         >
           ChromaMix
         </h1>
-        <p className="text-lg sm:text-xl text-white/70">
+        <p className="text-sm sm:text-lg text-white/70">
           Mix colors, match targets, master the palette
         </p>
       </motion.header>
 
-      {/* Stats Overview */}
+      {/* Stats Overview - Compact inline */}
       {(currentStreak > 0 || rushHighScore > 0 || totalGames > 0) && (
         <motion.section
-          initial={{ scale: 0.8, opacity: 0 }}
+          initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.15 }}
-          className="bg-white/10 backdrop-blur-sm rounded-2xl p-4"
+          transition={{ delay: 0.1 }}
+          className="bg-white/10 backdrop-blur-sm rounded-xl p-2 sm:p-3"
           aria-labelledby="stats-heading"
         >
           <h2 id="stats-heading" className="sr-only">Your Statistics</h2>
-          <div className="grid grid-cols-3 gap-4 text-center">
+          <div className="flex items-center justify-around text-center">
             {/* Streak */}
-            <div role="group" aria-label={`${currentStreak} day streak`}>
-              <div className="flex items-center justify-center gap-1 text-orange-400">
-                <Flame size={20} aria-hidden="true" />
-                <span className="text-2xl font-bold tabular-nums">{currentStreak}</span>
-              </div>
-              <div className="text-xs text-white/60 uppercase">
-                {currentStreak === 1 ? 'Day' : 'Days'} Streak
-              </div>
-              {longestStreak > currentStreak && (
-                <div className="text-xs text-white/40">Best: {longestStreak}</div>
-              )}
+            <div role="group" aria-label={`${currentStreak} day streak`} className="flex items-center gap-1">
+              <Flame size={16} className="text-orange-400" aria-hidden="true" />
+              <span className="text-lg sm:text-xl font-bold tabular-nums text-white">{currentStreak}</span>
+              <span className="text-xs text-white/50 hidden sm:inline">streak</span>
             </div>
             
             {/* Rush High Score */}
-            <div role="group" aria-label={`Rush mode high score: ${rushHighScore}`}>
-              <div className="flex items-center justify-center gap-1 text-yellow-400">
-                <Trophy size={20} aria-hidden="true" />
-                <span className="text-2xl font-bold tabular-nums">{rushHighScore}</span>
-              </div>
-              <div className="text-xs text-white/60 uppercase">Rush Best</div>
+            <div role="group" aria-label={`Rush mode high score: ${rushHighScore}`} className="flex items-center gap-1">
+              <Trophy size={16} className="text-yellow-400" aria-hidden="true" />
+              <span className="text-lg sm:text-xl font-bold tabular-nums text-white">{rushHighScore}</span>
+              <span className="text-xs text-white/50 hidden sm:inline">best</span>
             </div>
             
             {/* Achievements */}
             <motion.button
               ref={achievementsButtonRef}
-              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
                 setShowAchievements(true);
                 announce(`Opening achievements. ${unlockedCount} of ${ACHIEVEMENTS.length} unlocked.`);
               }}
-              className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-purple-900 rounded-lg p-1"
+              className="flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-lg p-1"
               aria-label={`View achievements. ${unlockedCount} of ${ACHIEVEMENTS.length} unlocked.`}
               aria-haspopup="dialog"
             >
-              <div className="flex items-center justify-center gap-1 text-purple-400">
-                <Award size={20} aria-hidden="true" />
-                <span className="text-2xl font-bold tabular-nums">{unlockedCount}/{ACHIEVEMENTS.length}</span>
-              </div>
-              <div className="text-xs text-white/60 uppercase">Achievements</div>
+              <Award size={16} className="text-purple-400" aria-hidden="true" />
+              <span className="text-lg sm:text-xl font-bold tabular-nums text-white">{unlockedCount}/{ACHIEVEMENTS.length}</span>
             </motion.button>
           </div>
         </motion.section>
       )}
 
-      {/* Game Mode Selection */}
+      {/* Game Mode Selection - Compact */}
       <nav aria-label="Game mode selection">
         <h2 className="sr-only">Choose a game mode</h2>
-        <ul className="space-y-4 list-none p-0 m-0" role="list">
+        <ul className="space-y-2 sm:space-y-3 list-none p-0 m-0" role="list">
           {modes.map((mode, idx) => {
             const Icon = mode.icon;
             
             return (
               <motion.li
                 key={mode.id}
-                initial={{ x: -20, opacity: 0 }}
+                initial={{ x: -10, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.3 + idx * 0.1 }}
+                transition={{ delay: 0.2 + idx * 0.08 }}
               >
                 <button
                   onClick={() => handleModeSelect(mode.id, mode.title)}
                   onKeyDown={(e) => handleKeyDown(e, mode.id, mode.title)}
-                  className={`game-mode-button w-full bg-gradient-to-r ${mode.gradient} p-5 sm:p-6 rounded-3xl shadow-2xl text-left space-y-2 group relative overflow-hidden focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-purple-900 transition-all hover:scale-[1.02] active:scale-[0.98]`}
+                  className={`game-mode-button w-full bg-gradient-to-r ${mode.gradient} p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-xl text-left group relative overflow-hidden focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-purple-900 transition-all hover:scale-[1.02] active:scale-[0.98]`}
                   aria-label={`${mode.title}: ${mode.description}. ${mode.subtitle}. Press ${mode.shortcut} as keyboard shortcut.`}
                   aria-describedby={`mode-desc-${mode.id}`}
                 >
                   {/* Completed badge */}
                   {mode.badge && (
                     <div 
-                      className="absolute top-4 right-4 bg-white/30 text-white text-lg w-8 h-8 rounded-full flex items-center justify-center font-bold"
+                      className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-white/30 text-white text-sm w-6 h-6 rounded-full flex items-center justify-center font-bold"
                       aria-hidden="true"
                     >
                       {mode.badge}
                     </div>
                   )}
                   
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <div 
-                      className="bg-white/20 backdrop-blur-sm p-3 sm:p-4 rounded-2xl group-hover:scale-110 group-focus-visible:scale-110 transition-transform"
+                      className="bg-white/20 backdrop-blur-sm p-2 sm:p-3 rounded-xl group-hover:scale-110 group-focus-visible:scale-110 transition-transform"
                       aria-hidden="true"
                     >
-                      <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
+                      <h3 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
                         {mode.title}
                         <kbd 
-                          className="hidden sm:inline-block text-sm font-mono bg-white/20 px-2 py-0.5 rounded"
+                          className="hidden sm:inline-block text-xs font-mono bg-white/20 px-1.5 py-0.5 rounded"
                           aria-hidden="true"
                         >
                           {mode.shortcut}
@@ -276,18 +263,13 @@ export default function GameModes() {
                       </h3>
                       <p 
                         id={`mode-desc-${mode.id}`}
-                        className="text-white/80 text-sm sm:text-base"
+                        className="text-white/80 text-xs sm:text-sm truncate"
                       >
                         {mode.description}
                       </p>
-                      {mode.subtitle && (
-                        <p className="text-white/60 text-sm mt-1">
-                          {mode.subtitle}
-                        </p>
-                      )}
                     </div>
                     <ChevronRight 
-                      className="w-6 h-6 text-white/50 group-hover:text-white group-hover:translate-x-1 group-focus-visible:text-white transition-all" 
+                      className="w-5 h-5 text-white/50 group-hover:text-white group-hover:translate-x-1 group-focus-visible:text-white transition-all flex-shrink-0" 
                       aria-hidden="true"
                     />
                   </div>
@@ -298,66 +280,43 @@ export default function GameModes() {
         </ul>
       </nav>
 
-      {/* How to Play */}
+      {/* How to Play - Compact, collapsed on mobile */}
       <motion.section
-        initial={{ y: 20, opacity: 0 }}
+        initial={{ y: 10, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 sm:p-6 space-y-4"
+        transition={{ delay: 0.4 }}
+        className="bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4"
         aria-labelledby="how-to-play-heading"
       >
         <h2 
           id="how-to-play-heading"
-          className="text-lg font-bold text-white"
+          className="text-sm sm:text-base font-bold text-white mb-2"
         >
           How to Play
         </h2>
-        <ol className="space-y-3 text-white/80 list-none p-0 m-0">
-          <li className="flex items-start gap-3">
-            <span className="text-2xl flex-shrink-0" aria-hidden="true">🎨</span>
-            <span>
-              <strong className="text-white">Step 1:</strong> Adjust the Red, Yellow, and Blue sliders to mix your color
-            </span>
+        {/* Compact inline steps on mobile */}
+        <div className="flex flex-wrap gap-2 sm:hidden text-xs text-white/70">
+          <span><span aria-hidden="true">🎨</span> Mix colors</span>
+          <span>→</span>
+          <span><span aria-hidden="true">🎯</span> Match target</span>
+          <span>→</span>
+          <span><span aria-hidden="true">⭐</span> Score 80+</span>
+        </div>
+        {/* Full steps on larger screens */}
+        <ol className="hidden sm:block space-y-2 text-white/80 list-none p-0 m-0 text-sm">
+          <li className="flex items-start gap-2">
+            <span className="text-lg flex-shrink-0" aria-hidden="true">🎨</span>
+            <span>Adjust the sliders to mix your color</span>
           </li>
-          <li className="flex items-start gap-3">
-            <span className="text-2xl flex-shrink-0" aria-hidden="true">🎯</span>
-            <span>
-              <strong className="text-white">Step 2:</strong> Try to match the target color as closely as possible
-            </span>
+          <li className="flex items-start gap-2">
+            <span className="text-lg flex-shrink-0" aria-hidden="true">🎯</span>
+            <span>Match the target as closely as possible</span>
           </li>
-          <li className="flex items-start gap-3">
-            <span className="text-2xl flex-shrink-0" aria-hidden="true">⭐</span>
-            <span>
-              <strong className="text-white">Step 3:</strong> Score 80+ to complete dailies, build combos in Rush!
-            </span>
+          <li className="flex items-start gap-2">
+            <span className="text-lg flex-shrink-0" aria-hidden="true">⭐</span>
+            <span>Score 80+ to complete, build combos in Rush!</span>
           </li>
         </ol>
-
-        {/* Keyboard shortcuts info */}
-        <div className="mt-4 pt-4 border-t border-white/20">
-          <h3 className="text-sm font-semibold text-white/80 mb-2">
-            Keyboard Shortcuts
-          </h3>
-          <ul className="text-sm text-white/60 space-y-1 list-none p-0 m-0">
-            <li>
-              <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded">1</kbd>
-              {' '}Daily Target
-            </li>
-            <li>
-              <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded">2</kbd>
-              {' '}Rush Mode
-            </li>
-            <li>
-              <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded">Tab</kbd>
-              {' '}Navigate between elements
-            </li>
-            <li>
-              <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded">Enter</kbd> or{' '}
-              <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded">Space</kbd>
-              {' '}Activate buttons
-            </li>
-          </ul>
-        </div>
       </motion.section>
 
       {/* Achievements Modal */}
@@ -450,8 +409,8 @@ export default function GameModes() {
         )}
       </AnimatePresence>
 
-      {/* Accessibility statement */}
-      <footer className="text-center text-sm text-white/40 pt-4">
+      {/* Accessibility statement - hidden on small screens */}
+      <footer className="hidden sm:block text-center text-xs text-white/40 pt-2">
         <p>
           ChromaMix is designed to be accessible to all players.
         </p>

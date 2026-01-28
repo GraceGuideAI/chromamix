@@ -1,4 +1,12 @@
 import chroma from 'chroma-js';
+import { 
+  getDailyPTSColor, 
+  getRandomPTSColor, 
+  type PTSColor 
+} from '@/data/ptsColors';
+
+// Re-export PTSColor type for consumers
+export type { PTSColor };
 
 /**
  * ColorPhysics - Advanced color mixing and scoring for ChromaMix
@@ -8,6 +16,7 @@ import chroma from 'chroma-js';
  * - True Kubelka-Munk K/S theory (enhanced mode)
  * - CIEDE2000 color difference with tiered scoring
  * - Mulberry32 PRNG for deterministic daily colors
+ * - Porsche PTS (Paint to Sample) color catalog integration
  */
 
 // ============================================================================
@@ -33,6 +42,15 @@ interface KSCoefficients {
 }
 
 export type MixingMode = 'cmyk' | 'kubelka-munk';
+
+/**
+ * Target color with name information (alias for PTSColor)
+ */
+export interface TargetColor {
+  hex: string;
+  name: string;
+  code?: string;
+}
 
 // ============================================================================
 // Mulberry32 PRNG - Deterministic random number generation
@@ -390,29 +408,30 @@ export function calculateSimpleScore(color1: string, color2: string): number {
 }
 
 // ============================================================================
-// Daily Color Generation (Mulberry32 PRNG)
+// Daily Color Generation (Porsche PTS Colors)
 // ============================================================================
 
 /**
- * Generate daily target color using Mulberry32 PRNG
- * Same color for all players on the same day, well-distributed
+ * Generate daily target color using Porsche PTS colors
+ * Same color for all players on the same day
+ * @returns TargetColor with hex, name, and optional code
  */
-export function getDailyTargetColor(date?: Date): string {
-  const rng = createDailyRNG(date);
-  
-  // Generate HSL components with good distribution
-  const hue = rng() * 360;
-  const saturation = 0.5 + rng() * 0.5;    // 50-100%
-  const lightness = 0.3 + rng() * 0.4;      // 30-70%
-  
-  return chroma.hsl(hue, saturation, lightness).hex();
+export function getDailyTargetColor(date?: Date): TargetColor {
+  const ptsColor = getDailyPTSColor(date);
+  return {
+    hex: ptsColor.hex,
+    name: ptsColor.name,
+    code: ptsColor.code,
+  };
 }
 
 /**
- * Get daily color info including date and deterministic seed
+ * Get daily color info including date, seed, and HSL values
  */
 export function getDailyColorInfo(date: Date = new Date()): {
   hex: string;
+  name: string;
+  code?: string;
   date: string;
   seed: number;
   hsl: { h: number; s: number; l: number };
@@ -421,11 +440,13 @@ export function getDailyColorInfo(date: Date = new Date()): {
                (date.getMonth() + 1) * 100 + 
                date.getDate();
   
-  const hex = getDailyTargetColor(date);
-  const hsl = chroma(hex).hsl();
+  const targetColor = getDailyTargetColor(date);
+  const hsl = chroma(targetColor.hex).hsl();
   
   return {
-    hex,
+    hex: targetColor.hex,
+    name: targetColor.name,
+    code: targetColor.code,
     date: date.toISOString().split('T')[0],
     seed,
     hsl: {
@@ -437,15 +458,16 @@ export function getDailyColorInfo(date: Date = new Date()): {
 }
 
 /**
- * Generate a random target color (for practice mode)
- * Weighted towards vibrant, saturated colors
+ * Generate a random target color from PTS catalog (for Rush mode)
+ * @returns TargetColor with hex, name, and optional code
  */
-export function generateRandomColor(): string {
-  const hue = Math.random() * 360;
-  const saturation = 0.5 + Math.random() * 0.5;
-  const lightness = 0.3 + Math.random() * 0.4;
-  
-  return chroma.hsl(hue, saturation, lightness).hex();
+export function generateRandomColor(): TargetColor {
+  const ptsColor = getRandomPTSColor();
+  return {
+    hex: ptsColor.hex,
+    name: ptsColor.name,
+    code: ptsColor.code,
+  };
 }
 
 // ============================================================================

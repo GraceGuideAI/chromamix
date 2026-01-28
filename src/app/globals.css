@@ -269,9 +269,16 @@ a,
 
 /* Slider container touch improvements */
 .slider-container {
-  /* Larger touch target area */
-  min-height: 80px;
-  padding: 16px;
+  /* Compact on mobile, larger on desktop */
+  min-height: 52px;
+  padding: 8px 12px;
+}
+
+@media (min-width: 640px) {
+  .slider-container {
+    min-height: 70px;
+    padding: 12px 16px;
+  }
 }
 
 .slider-track-container {
@@ -286,14 +293,27 @@ a,
    Color Swatch Accessibility
    ==================================== */
 .color-swatch {
-  /* Minimum size for color perception */
-  min-width: 100px;
-  min-height: 80px;
+  /* Minimum size for color perception - compact on mobile */
+  min-width: 80px;
+  min-height: 56px;
+}
+
+@media (min-width: 640px) {
+  .color-swatch {
+    min-width: 100px;
+    min-height: 80px;
+  }
 }
 
 /* Color comparison layout */
 .color-comparison {
-  gap: 16px;
+  gap: 8px;
+}
+
+@media (min-width: 640px) {
+  .color-comparison {
+    gap: 16px;
+  }
 }
 
 @media (min-width: 768px) {
@@ -421,8 +441,14 @@ a,
    Score Display Enhancements
    ==================================== */
 .score-display {
-  /* Ensure score is prominent */
-  min-height: 100px;
+  /* Compact on mobile, prominent on desktop */
+  min-height: 52px;
+}
+
+@media (min-width: 640px) {
+  .score-display {
+    min-height: 80px;
+  }
 }
 
 /* Tabular numbers for consistent score display */
@@ -466,26 +492,24 @@ kbd {
    ==================================== */
 @media (max-width: 640px) {
   :root {
-    /* Larger touch targets on mobile */
-    --slider-thumb-size: var(--slider-thumb-size-touch);
-    --touch-target-min: 48px;
+    /* Touch targets on mobile - 44px meets WCAG, don't over-inflate */
+    --slider-thumb-size: 36px;
+    --touch-target-min: 44px;
   }
   
-  /* Stack buttons on small screens */
-  .flex.gap-3 {
-    flex-direction: column;
-  }
+  /* DO NOT stack buttons - keep horizontal for space efficiency */
+  /* Removed: .flex.gap-3 { flex-direction: column; } */
   
-  /* Larger text for readability */
+  /* Slightly smaller text on mobile for density */
   .text-sm {
-    font-size: 0.9375rem;
+    font-size: 0.8125rem;
   }
 }
 
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
   :root {
-    --slider-thumb-size: var(--slider-thumb-size-touch);
+    --slider-thumb-size: 36px;
   }
   
   /* Remove hover effects on touch devices */
@@ -497,11 +521,11 @@ kbd {
     transform: none;
   }
   
-  /* Increase touch targets */
+  /* Touch targets - 44px is WCAG AA compliant, don't over-inflate */
   button,
   .game-button,
   .game-mode-button {
-    min-height: 52px;
+    min-height: 44px;
   }
 }
 
