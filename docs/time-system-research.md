@@ -10,10 +10,11 @@
 After analyzing successful time-limited arcade games, I recommend implementing a **score-based time extension system** with the following key characteristics:
 
 - **Base time:** 60 seconds (unchanged)
-- **Target session length:** 2-3 minutes for skilled players
-- **Time extensions:** +1s to +10s based on score quality
+- **Target session length:** 2-4 minutes for skilled players
+- **Time extensions:** +5s to +20s based on score quality (generous!)
 - **Soft cap:** Diminishing returns after 120s total playtime
 - **Hard cap:** 5-minute maximum session length
+- **Per-round cap:** 30 seconds maximum (prevents abuse with combo multipliers)
 
 ---
 
@@ -79,12 +80,10 @@ The core proposal ties time extensions directly to color matching performance:
 | Score Range | Time Bonus | Rationale |
 |-------------|------------|-----------|
 | 0-49        | -2s (penalty) | Punish random guessing |
-| 50-69       | +0s (neutral) | Below passing, no reward |
-| 70-79       | +1s | Decent effort rewarded |
-| 80-89       | +3s | Good performance |
-| 90-94       | +5s | Great match |
-| 95-99       | +8s | Excellent eye |
-| 100         | +10s | Perfect match jackpot |
+| 50-69       | +5s | Okay effort - encourage learning |
+| 70-84       | +8s | Good performance |
+| 85-94       | +12s | Great match |
+| 95-100      | +20s (PERFECT!) | Perfect match - massive jackpot |
 
 **Design Philosophy:** 
 - The threshold for "breaking even" (gaining more time than the round takes) requires ~80+ consistently
@@ -274,12 +273,10 @@ Actual bonus: 3 × 1.2 = 3.6 → 4 seconds
 // Time extension thresholds
 const TIME_BONUSES = {
   PENALTY: { min: 0, max: 49, bonus: -2 },
-  NEUTRAL: { min: 50, max: 69, bonus: 0 },
-  DECENT: { min: 70, max: 79, bonus: 1 },
-  GOOD: { min: 80, max: 89, bonus: 3 },
-  GREAT: { min: 90, max: 94, bonus: 5 },
-  EXCELLENT: { min: 95, max: 99, bonus: 8 },
-  PERFECT: { min: 100, max: 100, bonus: 10 },
+  OKAY: { min: 50, max: 69, bonus: 5 },
+  GOOD: { min: 70, max: 84, bonus: 8 },
+  GREAT: { min: 85, max: 94, bonus: 12 },
+  PERFECT: { min: 95, max: 100, bonus: 20 },
 };
 
 // Soft cap configuration
@@ -323,12 +320,10 @@ function calculateTimeBonus(
   let baseBonus = 0;
   let label = '';
   
-  if (score >= 100) { baseBonus = 10; label = 'PERFECT!'; }
-  else if (score >= 95) { baseBonus = 8; label = 'Excellent!'; }
-  else if (score >= 90) { baseBonus = 5; label = 'Great!'; }
-  else if (score >= 80) { baseBonus = 3; label = 'Good!'; }
-  else if (score >= 70) { baseBonus = 1; label = 'Decent'; }
-  else if (score >= 50) { baseBonus = 0; label = 'Try harder'; }
+  if (score >= 95) { baseBonus = 20; label = 'PERFECT!'; }
+  else if (score >= 85) { baseBonus = 12; label = 'Great!'; }
+  else if (score >= 70) { baseBonus = 8; label = 'Good!'; }
+  else if (score >= 50) { baseBonus = 5; label = 'Okay'; }
   else { baseBonus = -2; label = 'Too far off!'; }
   
   // Apply combo multiplier (only for positive bonuses)
@@ -460,18 +455,19 @@ Track: Session length, rounds, retention (return rate), satisfaction (survey)
 ## Appendix: Expected Session Length Calculator
 
 ```
-Average Score → Expected Session Length
+Average Score → Expected Session Length (with generous new bonuses)
 
-Score 60 (beginner): ~65-70 seconds
-Score 70 (casual): ~80-90 seconds  
-Score 80 (regular): ~100-120 seconds
-Score 85 (skilled): ~130-150 seconds
-Score 90 (advanced): ~160-180 seconds
-Score 95 (expert): ~200-240 seconds (soft capped)
-Score 100 (theoretical): ~240-300 seconds (hard capped)
+Score 50 (beginner): ~80-100 seconds (+5s per round helps learning)
+Score 60 (casual): ~100-130 seconds  
+Score 70 (regular): ~150-180 seconds (+8s base bonus)
+Score 85 (skilled): ~200-240 seconds (+12s base bonus)
+Score 95 (expert): ~240-300 seconds (hard capped, +20s PERFECT!)
 ```
 
-This achieves the target of 2-3 minute sessions for skilled players while keeping beginners engaged with shorter but still meaningful sessions (~70 seconds).
+With the updated generous bonuses (+5s for 50-69, +8s for 70-84, +12s for 85-94, +20s for 95+), 
+sessions are longer and more forgiving. The 30s single-round cap prevents runaway infinite play
+while still rewarding skilled players generously. Soft caps and diminishing returns ensure
+even perfect players hit the 5-minute hard cap.
 
 ---
 

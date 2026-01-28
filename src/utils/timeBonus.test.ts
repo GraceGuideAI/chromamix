@@ -49,25 +49,34 @@ console.log('='.repeat(50));
 // Test: calculateBaseTimeBonus
 console.log('\n📊 calculateBaseTimeBonus');
 
-test('Perfect score (95+) gives 5 seconds', () => {
+test('Perfect score (95+) gives 20 seconds', () => {
   assertEqual(calculateBaseTimeBonus(95), BONUSES.PERFECT);
   assertEqual(calculateBaseTimeBonus(100), BONUSES.PERFECT);
+  assertEqual(BONUSES.PERFECT, 20);
 });
 
-test('Great score (85-94) gives 3 seconds', () => {
+test('Great score (85-94) gives 12 seconds', () => {
   assertEqual(calculateBaseTimeBonus(85), BONUSES.GREAT);
   assertEqual(calculateBaseTimeBonus(94), BONUSES.GREAT);
+  assertEqual(BONUSES.GREAT, 12);
 });
 
-test('Good score (70-84) gives 2 seconds', () => {
+test('Good score (70-84) gives 8 seconds', () => {
   assertEqual(calculateBaseTimeBonus(70), BONUSES.GOOD);
   assertEqual(calculateBaseTimeBonus(84), BONUSES.GOOD);
+  assertEqual(BONUSES.GOOD, 8);
 });
 
-test('Low score (<70) gives 0 seconds', () => {
-  assertEqual(calculateBaseTimeBonus(69), BONUSES.BASE);
-  assertEqual(calculateBaseTimeBonus(50), BONUSES.BASE);
+test('Okay score (50-69) gives 5 seconds', () => {
+  assertEqual(calculateBaseTimeBonus(50), BONUSES.OKAY);
+  assertEqual(calculateBaseTimeBonus(69), BONUSES.OKAY);
+  assertEqual(BONUSES.OKAY, 5);
+});
+
+test('Low score (<50) gives 0 seconds', () => {
+  assertEqual(calculateBaseTimeBonus(49), BONUSES.BASE);
   assertEqual(calculateBaseTimeBonus(0), BONUSES.BASE);
+  assertEqual(BONUSES.BASE, 0);
 });
 
 // Test: getComboMultiplier
@@ -137,25 +146,32 @@ test('Too slow (>5s) breaks combo regardless of score', () => {
 // Test: calculateTimeBonus with combo
 console.log('\n⏱️ calculateTimeBonus (with combo)');
 
-test('Perfect score with no combo gives 5 seconds', () => {
-  assertEqual(calculateTimeBonus(95, 0), 5);
+test('Perfect score with no combo gives 20 seconds', () => {
+  assertEqual(calculateTimeBonus(95, 0), 20);
 });
 
-test('Perfect score with 2x combo gives 7.5 seconds', () => {
-  assertEqual(calculateTimeBonus(95, 2), 7.5);
+test('Perfect score with 2x combo gives 30 seconds (capped)', () => {
+  // 20 * 1.5 = 30, which hits the cap
+  assertEqual(calculateTimeBonus(95, 2), 30);
 });
 
-test('Perfect score with ON_FIRE combo gives 12.5 seconds', () => {
-  assertEqual(calculateTimeBonus(95, 6), 12.5);
+test('Perfect score with ON_FIRE combo is capped at 30 seconds', () => {
+  // 20 * 2.5 = 50, but capped at 30
+  assertEqual(calculateTimeBonus(95, 6), 30);
 });
 
-test('Low score gives 0 even with combo', () => {
-  assertEqual(calculateTimeBonus(50, 6), 0);
+test('Okay score (50-69) with ON_FIRE combo gives 12.5 seconds', () => {
+  // 5 * 2.5 = 12.5
+  assertEqual(calculateTimeBonus(60, 6), 12.5);
+});
+
+test('Low score (<50) gives 0 even with combo', () => {
+  assertEqual(calculateTimeBonus(49, 6), 0);
 });
 
 test('Quick submission bonus applies', () => {
-  const normal = calculateTimeBonus(95, 2);
-  const quick = calculateTimeBonus(95, 2, 1000); // Under 2 seconds
+  const normal = calculateTimeBonus(85, 0); // 12s base
+  const quick = calculateTimeBonus(85, 0, 1000); // Under 2 seconds
   assertTrue(quick > normal, 'Quick bonus should increase time');
 });
 
@@ -254,7 +270,7 @@ console.log('\n📈 getTimeBonusBreakdown');
 
 test('Breakdown shows correct components', () => {
   const breakdown = getTimeBonusBreakdown(95, 2, 1000);
-  assertEqual(breakdown.baseBonus, 5, 'Base bonus');
+  assertEqual(breakdown.baseBonus, 20, 'Base bonus');
   assertTrue(breakdown.comboBonus > 0, 'Combo bonus should be positive');
   assertTrue(breakdown.isQuick, 'Should be quick submission');
   assertTrue(breakdown.quickBonus > 0, 'Quick bonus should be positive');
@@ -269,9 +285,9 @@ test('Slow submission has no quick bonus', () => {
 // Edge cases
 console.log('\n🔬 Edge Cases');
 
-test('Time bonus caps at 15 seconds', () => {
+test('Time bonus caps at 30 seconds', () => {
   const bonus = calculateTimeBonus(100, 20, 500); // Max combo, perfect score, quick
-  assertTrue(bonus <= 15, `Bonus ${bonus} should be <= 15`);
+  assertTrue(bonus <= 30, `Bonus ${bonus} should be <= 30`);
 });
 
 test('Negative scores handled gracefully', () => {

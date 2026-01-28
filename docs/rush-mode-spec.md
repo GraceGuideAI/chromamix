@@ -258,10 +258,10 @@ This ensures skilled players feel rewarded without creating marathon sessions.
 
 | Score Range | Time Effect | Rationale |
 |-------------|-------------|-----------|
-| 95-100 | Max extension | Perfect match |
-| 80-94 | Good extension | Strong performance |
-| 70-79 | Small extension | Acceptable |
-| 50-69 | No change | Neutral (no penalty, no bonus) |
+| 95-100 | +20s (PERFECT!) | Perfect match - massive reward |
+| 85-94 | +12s | Great performance |
+| 70-84 | +8s | Good performance |
+| 50-69 | +5s | Okay - small bonus to encourage |
 | 0-49 | -1s penalty | Poor match drains time |
 
 ### 5.2 Penalty Implementation
@@ -454,9 +454,18 @@ const MAX_SESSION_LENGTH = 300;     // 5 minute hard cap
 const GRACE_PERIOD_MS = 1500;       // End-of-game grace
 
 // Scoring Thresholds
-const EXTENSION_THRESHOLD = 70;     // Min score for time bonus
+const EXTENSION_THRESHOLD = 50;     // Min score for time bonus (+5s for 50-69)
 const PENALTY_THRESHOLD = 50;       // Score below = -1s
 const COMBO_GRACE_THRESHOLD = 60;   // Score that preserves partial combo
+
+// Time Bonuses (base values before combo multipliers)
+const TIME_BONUSES = {
+  PERFECT: 20,   // 95+ score
+  GREAT: 12,     // 85-94 score
+  GOOD: 8,       // 70-84 score
+  OKAY: 5,       // 50-69 score
+  BASE: 0,       // <50 score
+};
 
 // Extension Caps by Phase
 const EXTENSION_CAPS = {

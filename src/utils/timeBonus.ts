@@ -10,20 +10,22 @@ export type ComboTier = 'DOUBLE' | 'TRIPLE' | 'ON_FIRE' | null;
  * Score thresholds for different bonuses
  */
 const SCORE_THRESHOLDS = {
-  PERFECT: 95,   // Maximum time bonus
-  GREAT: 85,     // Good time bonus
-  GOOD: 70,      // Small time bonus
-  MINIMUM: 50,   // No bonus, but maintains combo
+  PERFECT: 95,   // Maximum time bonus (+20s PERFECT!)
+  GREAT: 85,     // Large time bonus (+12s)
+  GOOD: 70,      // Good time bonus (+8s)
+  OKAY: 50,      // Small time bonus (+5s)
+  MINIMUM: 50,   // No bonus below 50, but maintains combo
 } as const;
 
 /**
  * Time bonus values in seconds based on score quality
  */
 const TIME_BONUSES = {
-  PERFECT: 5,    // +5 seconds for 95+
-  GREAT: 3,      // +3 seconds for 85-94
-  GOOD: 2,       // +2 seconds for 70-84
-  BASE: 0,       // No bonus below 70
+  PERFECT: 20,   // +20 seconds for 95+ (PERFECT!)
+  GREAT: 12,     // +12 seconds for 85-94
+  GOOD: 8,       // +8 seconds for 70-84
+  OKAY: 5,       // +5 seconds for 50-69
+  BASE: 0,       // No bonus below 50
 } as const;
 
 /**
@@ -58,6 +60,9 @@ export function calculateBaseTimeBonus(score: number): number {
   }
   if (score >= SCORE_THRESHOLDS.GOOD) {
     return TIME_BONUSES.GOOD;
+  }
+  if (score >= SCORE_THRESHOLDS.OKAY) {
+    return TIME_BONUSES.OKAY;
   }
   return TIME_BONUSES.BASE;
 }
@@ -104,7 +109,8 @@ export function calculateTimeBonus(
   }
   
   // Round to nearest 0.5 and cap at reasonable maximum
-  return Math.min(Math.round(finalBonus * 2) / 2, 15);
+  // Max cap raised to 30s to accommodate generous new bonuses while preventing abuse
+  return Math.min(Math.round(finalBonus * 2) / 2, 30);
 }
 
 /**
