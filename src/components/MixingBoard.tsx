@@ -7,6 +7,9 @@ import useGameStore, { getScoreLabel, getScoreLabelColor, getTimeUntilNewDaily }
 import { getColorName } from '@/utils/colorPhysics';
 import { getGameColorName } from '@/data/colors';
 import confetti from 'canvas-confetti';
+import Timer, { TimeExtensionPopup } from './Timer';
+import ComboDisplay, { ComboAnnouncement, RushStatsBar } from './ComboDisplay';
+import { getComboTier } from '@/utils/timeBonus';
 
 // Accessible slider component with enhanced tactile feedback
 interface AccessibleSliderProps {
@@ -192,6 +195,15 @@ export default function MixingBoard() {
     rushRounds,
     rushCombo,
     rushMaxCombo,
+    // Time extension system
+    comboCount,
+    maxCombo,
+    streakCount,
+    totalTimeEarned,
+    lastTimeBonus,
+    showTimeBonus,
+    lastComboTier,
+    showComboAnnouncement,
     // Daily mode
     dailyAttempts,
     dailyBestScore,
@@ -481,60 +493,42 @@ export default function MixingBoard() {
             role="group"
             aria-label="Rush mode statistics"
           >
-            {/* Timer - prominent but compact */}
-            <div 
-              className="flex items-center gap-1"
-              role="timer"
-              aria-label={`Time remaining: ${timeRemaining} seconds`}
-            >
-              <Clock size={16} className="text-white/60" aria-hidden="true" />
-              <span 
-                className={`text-2xl sm:text-3xl font-bold tabular-nums ${timeRemaining < 10 ? 'text-red-500 animate-pulse' : 'text-white'}`}
-                aria-hidden="true"
-              >
-                {timeRemaining}s
-              </span>
-              <span className="sr-only">{timeRemaining} seconds remaining</span>
-            </div>
+            {/* Timer - using new Timer component */}
+            <Timer 
+              timeRemaining={timeRemaining}
+              isRunning={isTimerRunning}
+              lastTimeBonus={lastTimeBonus}
+              showTimeBonus={showTimeBonus}
+            />
             
-            {/* Stats inline */}
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="flex items-center gap-1 text-orange-400">
-                <Zap size={14} aria-hidden="true" />
-                <span className="text-lg sm:text-xl font-bold tabular-nums">{rushScore}</span>
-              </div>
-              <div className="flex items-center gap-1 text-blue-400">
-                <Target size={14} aria-hidden="true" />
-                <span className="text-lg sm:text-xl font-bold tabular-nums">{rushRounds}</span>
-              </div>
-              <div className="flex items-center gap-1 text-purple-400">
-                <Flame size={14} aria-hidden="true" />
-                <span className="text-lg sm:text-xl font-bold tabular-nums">{rushCombo}x</span>
-              </div>
-            </div>
+            {/* Stats inline with RushStatsBar */}
+            <RushStatsBar
+              score={rushScore}
+              rounds={rushRounds}
+              combo={comboCount}
+              maxCombo={maxCombo}
+              totalTimeEarned={totalTimeEarned}
+            />
           </div>
           
-          {/* Combo Indicator - inline badge when active */}
-          {rushCombo >= 2 && isTimerRunning && (
+          {/* Combo Display - persistent counter with tiers */}
+          {isTimerRunning && comboCount >= 1 && (
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="text-center"
-              role="status"
-              aria-live="polite"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex justify-center"
             >
-              <span className={`inline-block px-3 py-0.5 rounded-full font-bold text-sm ${
-                rushCombo >= 5 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white animate-pulse' :
-                rushCombo >= 3 ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' :
-                'bg-blue-500/50 text-white'
-              }`}>
-                <span aria-hidden="true">🔥</span> {rushCombo}x Combo!
-              </span>
+              <ComboDisplay
+                comboCount={comboCount}
+                maxCombo={maxCombo}
+                streakCount={streakCount}
+                isActive={isTimerRunning}
+              />
             </motion.div>
           )}
           
           {/* Start Button (before game starts) */}
-          {!isTimerRunning && timeRemaining === 60 && rushScore === 0 && (
+          {!isTimerRunning && timeRemaining >= 60 && rushScore === 0 && (
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -547,6 +541,20 @@ export default function MixingBoard() {
           )}
         </motion.section>
       )}
+      
+      {/* Combo Announcement Overlay */}
+      <ComboAnnouncement
+        tier={lastComboTier}
+        isVisible={showComboAnnouncement}
+        comboCount={comboCount}
+      />
+      
+      {/* Time Extension Popup */}
+      <TimeExtensionPopup
+        seconds={lastTimeBonus || 0}
+        isVisible={showTimeBonus && (lastTimeBonus || 0) > 0}
+        position="top"
+      />
 
       {/* Daily Mode Header - Compact single row */}
       {mode === 'daily' && (
@@ -604,18 +612,22 @@ export default function MixingBoard() {
           <h2 id="game-over-title" className="text-xl font-bold text-white">
             <span aria-hidden="true">⏱️</span> Time&apos;s Up!
           </h2>
-          <div className="grid grid-cols-3 gap-2" role="group" aria-label="Final statistics">
+          <div className="grid grid-cols-4 gap-2" role="group" aria-label="Final statistics">
             <div>
-              <div className="text-3xl font-bold text-white tabular-nums">{rushScore}</div>
+              <div className="text-2xl sm:text-3xl font-bold text-white tabular-nums">{rushScore}</div>
               <div className="text-xs text-white/70">Score</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-white tabular-nums">{rushRounds}</div>
+              <div className="text-2xl sm:text-3xl font-bold text-white tabular-nums">{rushRounds}</div>
               <div className="text-xs text-white/70">Rounds</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-white tabular-nums">{rushMaxCombo}x</div>
-              <div className="text-xs text-white/70">Combo</div>
+              <div className="text-2xl sm:text-3xl font-bold text-white tabular-nums">{maxCombo}x</div>
+              <div className="text-xs text-white/70">Best Combo</div>
+            </div>
+            <div>
+              <div className="text-2xl sm:text-3xl font-bold text-green-300 tabular-nums">+{totalTimeEarned}s</div>
+              <div className="text-xs text-white/70">Time Earned</div>
             </div>
           </div>
           <div className="flex gap-2">

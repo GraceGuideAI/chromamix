@@ -6,6 +6,13 @@ import {
   getDailyTargetColor,
   type TargetColor,
 } from '@/utils/colorPhysics';
+import {
+  calculateTimeBonus,
+  calculatePointsWithCombo,
+  shouldBreakCombo,
+  getComboTier,
+  type ComboTier,
+} from '@/utils/timeBonus';
 
 export type GameMode = 'menu' | 'daily' | 'rush';
 
@@ -188,6 +195,21 @@ interface GameState {
   stopTimer: () => void;
   tickTimer: () => void;
   
+  // Time extension system
+  comboCount: number;
+  maxCombo: number;
+  streakCount: number;
+  totalTimeEarned: number;
+  roundHistory: Array<{ score: number; timeBonus: number; timestamp: number }>;
+  lastRoundTime: number;
+  lastTimeBonus: number | null;
+  showTimeBonus: boolean;
+  lastComboTier: ComboTier;
+  showComboAnnouncement: boolean;
+  addTime: (seconds: number) => void;
+  clearTimeBonusDisplay: () => void;
+  clearComboAnnouncement: () => void;
+  
   // Persistence
   persistentData: PersistentData;
   loadData: () => void;
@@ -234,6 +256,18 @@ const useGameStore = create<GameState>((set, get) => ({
   rushRounds: 0,
   rushCombo: 0,
   rushMaxCombo: 0,
+  
+  // Time extension system state
+  comboCount: 0,
+  maxCombo: 0,
+  streakCount: 0,
+  totalTimeEarned: 0,
+  roundHistory: [],
+  lastRoundTime: 0,
+  lastTimeBonus: null,
+  showTimeBonus: false,
+  lastComboTier: null,
+  showComboAnnouncement: false,
   
   // Persistence
   persistentData: getDefaultPersistentData(),
@@ -324,6 +358,17 @@ const useGameStore = create<GameState>((set, get) => ({
         rushCombo: 0,
         rushMaxCombo: 0,
         currentScore: 0,
+        // Initialize time extension system
+        comboCount: 0,
+        maxCombo: 0,
+        streakCount: 0,
+        totalTimeEarned: 0,
+        roundHistory: [],
+        lastRoundTime: 0,
+        lastTimeBonus: null,
+        showTimeBonus: false,
+        lastComboTier: null,
+        showComboAnnouncement: false,
       });
     } else {
       set({ mode });
@@ -442,30 +487,58 @@ const useGameStore = create<GameState>((set, get) => ({
       });
       
     } else if (mode === 'rush') {
-      // Rush mode scoring with combo
-      let newCombo = rushCombo;
-      let pointsEarned = 0;
+      // Rush mode scoring with combo and time extension system
+      const now = Date.now();
+      const timeSinceLastRound = state.lastRoundTime > 0 ? now - state.lastRoundTime : 0;
+      const currentCombo = state.comboCount;
       
-      if (score >= 70) {
-        // Good match - increase combo
-        newCombo = rushCombo + 1;
-        
-        // Points = base score + combo bonus
-        const comboMultiplier = 1 + (newCombo * 0.2); // 20% bonus per combo level
-        pointsEarned = Math.round(score * comboMultiplier);
+      // Determine if combo should break
+      const comboBreaks = state.lastRoundTime > 0 && shouldBreakCombo(score, timeSinceLastRound);
+      
+      // Calculate new combo count
+      let newCombo: number;
+      if (comboBreaks) {
+        newCombo = score >= 50 ? 1 : 0; // Start fresh if decent score
+      } else if (score >= 50) {
+        newCombo = currentCombo + 1;
       } else {
-        // Poor match - reset combo
         newCombo = 0;
-        pointsEarned = Math.round(score * 0.5); // Half points for bad matches
       }
       
-      const newRushScore = rushScore + pointsEarned;
+      // Calculate points with combo multiplier
+      const { totalPoints, bonusPoints } = calculatePointsWithCombo(score, newCombo);
+      
+      // Calculate time bonus
+      const timeBonus = calculateTimeBonus(score, newCombo, timeSinceLastRound);
+      
+      // Check for new combo tier milestone
+      const prevTier = getComboTier(currentCombo);
+      const newTier = getComboTier(newCombo);
+      const isNewTierMilestone = newTier !== null && newTier !== prevTier;
+      
+      // Update streak count (consecutive successful matches)
+      const newStreak = score >= 70 ? state.streakCount + 1 : 0;
+      
+      // Update max combo
+      const newMaxCombo = Math.max(state.maxCombo, newCombo);
+      
+      // Update round history
+      const roundEntry = { score, timeBonus, timestamp: now };
+      const newRoundHistory = [...state.roundHistory, roundEntry].slice(-50); // Keep last 50 rounds
+      
+      // Calculate new totals
+      const newRushScore = rushScore + totalPoints;
       const newRushRounds = rushRounds + 1;
-      const newMaxCombo = Math.max(state.rushMaxCombo, newCombo);
+      const newTotalTimeEarned = state.totalTimeEarned + timeBonus;
       
       // Combo achievements
       if (newCombo >= 3) unlockAchievement('combo_3');
       if (newCombo >= 5) unlockAchievement('combo_5');
+      
+      // Apply time extension
+      if (timeBonus > 0) {
+        get().addTime(timeBonus);
+      }
       
       set({
         currentScore: score,
@@ -473,7 +546,32 @@ const useGameStore = create<GameState>((set, get) => ({
         rushRounds: newRushRounds,
         rushCombo: newCombo,
         rushMaxCombo: newMaxCombo,
+        // Time extension system updates
+        comboCount: newCombo,
+        maxCombo: newMaxCombo,
+        streakCount: newStreak,
+        totalTimeEarned: newTotalTimeEarned,
+        roundHistory: newRoundHistory,
+        lastRoundTime: now,
+        lastTimeBonus: timeBonus > 0 ? timeBonus : null,
+        showTimeBonus: timeBonus > 0,
+        lastComboTier: isNewTierMilestone ? newTier : null,
+        showComboAnnouncement: isNewTierMilestone,
       });
+      
+      // Clear time bonus display after animation
+      if (timeBonus > 0) {
+        setTimeout(() => {
+          get().clearTimeBonusDisplay();
+        }, 1500);
+      }
+      
+      // Clear combo announcement after animation
+      if (isNewTierMilestone) {
+        setTimeout(() => {
+          get().clearComboAnnouncement();
+        }, 1200);
+      }
       
       // Auto advance to next color in rush mode
       setTimeout(() => {
@@ -551,6 +649,17 @@ const useGameStore = create<GameState>((set, get) => ({
         rushRounds: 0,
         rushCombo: 0,
         rushMaxCombo: 0,
+        // Reset time extension system for new game
+        comboCount: 0,
+        maxCombo: 0,
+        streakCount: 0,
+        totalTimeEarned: 0,
+        roundHistory: [],
+        lastRoundTime: 0,
+        lastTimeBonus: null,
+        showTimeBonus: false,
+        lastComboTier: null,
+        showComboAnnouncement: false,
       });
       get().startTimer();
     }
@@ -567,7 +676,32 @@ const useGameStore = create<GameState>((set, get) => ({
       rushRounds: 0,
       rushCombo: 0,
       rushMaxCombo: 0,
+      // Reset time extension system
+      comboCount: 0,
+      maxCombo: 0,
+      streakCount: 0,
+      totalTimeEarned: 0,
+      roundHistory: [],
+      lastRoundTime: 0,
+      lastTimeBonus: null,
+      showTimeBonus: false,
+      lastComboTier: null,
+      showComboAnnouncement: false,
     });
+  },
+  
+  addTime: (seconds: number) => {
+    set((state) => ({
+      timeRemaining: state.timeRemaining + seconds,
+    }));
+  },
+  
+  clearTimeBonusDisplay: () => {
+    set({ showTimeBonus: false, lastTimeBonus: null });
+  },
+  
+  clearComboAnnouncement: () => {
+    set({ showComboAnnouncement: false, lastComboTier: null });
   },
   
   startTimer: () => {
@@ -600,7 +734,7 @@ const useGameStore = create<GameState>((set, get) => ({
   
   // Share functionality
   generateShareText: () => {
-    const { mode, dailyBestScore, dailyAttempts, rushScore, rushRounds, rushMaxCombo, currentStreak, targetColor } = get();
+    const { mode, dailyBestScore, dailyAttempts, rushScore, rushRounds, maxCombo, totalTimeEarned, currentStreak, targetColor } = get();
     const today = new Date();
     const dateStr = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
     
@@ -623,7 +757,8 @@ Play at chromamix.app`;
 
 🏆 Score: ${rushScore}
 🎯 Rounds: ${rushRounds}
-🔗 Max Combo: ${rushMaxCombo}x
+🔗 Max Combo: ${maxCombo}x
+⏱️ Time Earned: +${totalTimeEarned}s
 
 Play at chromamix.app`;
     }
