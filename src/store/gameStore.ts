@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { 
-  mixColorsSubtractive, 
+  mixColorsRGB, 
   calculateColorScore, 
   generateRandomColor,
   getDailyTargetColor,
@@ -15,6 +15,13 @@ interface ColorSlider {
   baseColor: string;
   amount: number;
 }
+
+// Default RGB sliders
+const DEFAULT_SLIDERS: ColorSlider[] = [
+  { id: 'red', label: 'Red', baseColor: '#FF0000', amount: 0 },
+  { id: 'green', label: 'Green', baseColor: '#00FF00', amount: 0 },
+  { id: 'blue', label: 'Blue', baseColor: '#0000FF', amount: 0 },
+];
 
 // Achievement definitions
 export interface Achievement {
@@ -66,7 +73,7 @@ interface DailyStats {
   attempts: number;
   bestScore: number;
   completed: boolean;
-  sliderSnapshot?: { red: number; yellow: number; blue: number; white?: number };
+  sliderSnapshot?: { red: number; green: number; blue: number };
 }
 
 interface PersistentData {
@@ -155,10 +162,10 @@ interface GameState {
   mode: GameMode;
   setMode: (mode: GameMode) => void;
   
-  // Target color (now includes name from PTS catalog)
+  // Target color (includes name from custom color catalog)
   targetColor: TargetColor;
   
-  // Color sliders
+  // Color sliders (RGB)
   sliders: ColorSlider[];
   updateSlider: (id: string, amount: number) => void;
   
@@ -214,14 +221,9 @@ const useGameStore = create<GameState>((set, get) => ({
   mode: 'menu',
   targetColor: getDailyTargetColor(),
   
-  sliders: [
-    { id: 'red', label: 'Red', baseColor: '#FF0000', amount: 0 },
-    { id: 'yellow', label: 'Yellow', baseColor: '#FFFF00', amount: 0 },
-    { id: 'blue', label: 'Blue', baseColor: '#0000FF', amount: 0 },
-    { id: 'white', label: 'White', baseColor: '#FFFFFF', amount: 0 },
-  ],
+  sliders: [...DEFAULT_SLIDERS],
   
-  currentMix: '#FFFFFF',
+  currentMix: '#000000', // Black when no colors mixed (RGB additive starts dark)
   currentScore: 0,
   bestScore: 0,
   
@@ -348,11 +350,11 @@ const useGameStore = create<GameState>((set, get) => ({
       .map(s => ({ hex: s.baseColor, amount: s.amount }));
     
     if (colors.length === 0) {
-      set({ currentMix: '#FFFFFF' });
+      set({ currentMix: '#000000' }); // Black when no light (RGB additive)
       return;
     }
     
-    const mixed = mixColorsSubtractive(colors);
+    const mixed = mixColorsRGB(colors);
     set({ currentMix: mixed });
   },
   
@@ -398,9 +400,8 @@ const useGameStore = create<GameState>((set, get) => ({
       todayStats.bestScore = Math.max(todayStats.bestScore, score);
       todayStats.sliderSnapshot = {
         red: state.sliders.find(s => s.id === 'red')?.amount || 0,
-        yellow: state.sliders.find(s => s.id === 'yellow')?.amount || 0,
+        green: state.sliders.find(s => s.id === 'green')?.amount || 0,
         blue: state.sliders.find(s => s.id === 'blue')?.amount || 0,
-        white: state.sliders.find(s => s.id === 'white')?.amount || 0,
       };
       
       if (score >= 80 && !todayStats.completed) {
@@ -479,13 +480,8 @@ const useGameStore = create<GameState>((set, get) => ({
         if (get().isTimerRunning && get().timeRemaining > 0) {
           set({
             targetColor: generateRandomColor(),
-            sliders: [
-              { id: 'red', label: 'Red', baseColor: '#FF0000', amount: 0 },
-              { id: 'yellow', label: 'Yellow', baseColor: '#FFFF00', amount: 0 },
-              { id: 'blue', label: 'Blue', baseColor: '#0000FF', amount: 0 },
-              { id: 'white', label: 'White', baseColor: '#FFFFFF', amount: 0 },
-            ],
-            currentMix: '#FFFFFF',
+            sliders: [...DEFAULT_SLIDERS],
+            currentMix: '#000000',
             currentScore: 0,
           });
         }
@@ -543,13 +539,8 @@ const useGameStore = create<GameState>((set, get) => ({
     
     set({
       targetColor: mode === 'daily' ? getDailyTargetColor() : generateRandomColor(),
-      sliders: [
-        { id: 'red', label: 'Red', baseColor: '#FF0000', amount: 0 },
-        { id: 'yellow', label: 'Yellow', baseColor: '#FFFF00', amount: 0 },
-        { id: 'blue', label: 'Blue', baseColor: '#0000FF', amount: 0 },
-        { id: 'white', label: 'White', baseColor: '#FFFFFF', amount: 0 },
-      ],
-      currentMix: '#FFFFFF',
+      sliders: [...DEFAULT_SLIDERS],
+      currentMix: '#000000',
       currentScore: 0,
     });
     
@@ -567,13 +558,8 @@ const useGameStore = create<GameState>((set, get) => ({
   
   resetGame: () => {
     set({
-      sliders: [
-        { id: 'red', label: 'Red', baseColor: '#FF0000', amount: 0 },
-        { id: 'yellow', label: 'Yellow', baseColor: '#FFFF00', amount: 0 },
-        { id: 'blue', label: 'Blue', baseColor: '#0000FF', amount: 0 },
-        { id: 'white', label: 'White', baseColor: '#FFFFFF', amount: 0 },
-      ],
-      currentMix: '#FFFFFF',
+      sliders: [...DEFAULT_SLIDERS],
+      currentMix: '#000000',
       currentScore: 0,
       timeRemaining: 60,
       isTimerRunning: false,
@@ -623,7 +609,7 @@ const useGameStore = create<GameState>((set, get) => ({
       const squares = getScoreSquares(dailyBestScore);
       
       return `🎨 ChromaMix Daily ${dateStr}
-🚗 Porsche PTS: ${targetColor.name}
+🎯 Target: ${targetColor.name}
 
 ${squares}
 

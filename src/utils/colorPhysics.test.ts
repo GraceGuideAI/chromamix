@@ -7,8 +7,7 @@ import {
   getDailyTargetColor,
   getDailyColorInfo,
   calculateColorScore,
-  mixColorsSubtractive,
-  mixColorsKubelkaMunk,
+  mixColorsRGB,
   SCORE_TIERS,
 } from './colorPhysics';
 
@@ -22,7 +21,7 @@ console.log('='.repeat(60));
 
 // Generate colors for 30 days
 const startDate = new Date('2025-01-01');
-const dailyColors: { date: string; hex: string; h: number; s: number; l: number }[] = [];
+const dailyColors: { date: string; hex: string; name: string; h: number; s: number; l: number }[] = [];
 
 for (let i = 0; i < 30; i++) {
   const date = new Date(startDate);
@@ -31,6 +30,7 @@ for (let i = 0; i < 30; i++) {
   dailyColors.push({
     date: info.date,
     hex: info.hex,
+    name: info.name,
     h: info.hsl.h,
     s: info.hsl.s,
     l: info.hsl.l
@@ -39,7 +39,7 @@ for (let i = 0; i < 30; i++) {
 
 console.log('\nFirst 10 days:');
 dailyColors.slice(0, 10).forEach(c => {
-  console.log(`  ${c.date}: ${c.hex} (H:${c.h.toString().padStart(3)}° S:${c.s}% L:${c.l}%)`);
+  console.log(`  ${c.date}: ${c.hex} "${c.name}" (H:${c.h.toString().padStart(3)}° S:${c.s}% L:${c.l}%)`);
 });
 
 // Check hue distribution
@@ -67,7 +67,7 @@ Object.entries(hueDistribution).forEach(([hue, count]) => {
 const testDate = new Date('2025-06-15');
 const color1 = getDailyTargetColor(testDate);
 const color2 = getDailyTargetColor(testDate);
-console.log(`\nDeterminism test (same date): ${color1} === ${color2} → ${color1 === color2 ? '✅ PASS' : '❌ FAIL'}`);
+console.log(`\nDeterminism test (same date): ${color1.hex} === ${color2.hex} → ${color1.hex === color2.hex ? '✅ PASS' : '❌ FAIL'}`);
 
 // Check uniqueness
 const uniqueColors = new Set(dailyColors.map(c => c.hex));
@@ -106,50 +106,54 @@ Object.entries(SCORE_TIERS).forEach(([tier, info]) => {
 });
 
 // ============================================================================
-// Test Mixing Modes
+// Test RGB Additive Mixing
 // ============================================================================
 
 console.log('\n' + '='.repeat(60));
-console.log('TEST 3: Color Mixing Modes (CMYK vs Kubelka-Munk)');
+console.log('TEST 3: RGB Additive Color Mixing');
 console.log('='.repeat(60));
 
 const mixTests = [
   { 
-    name: 'Red + Yellow',
-    colors: [{ hex: '#FF0000', amount: 1 }, { hex: '#FFFF00', amount: 1 }],
-    expected: 'Orange-ish'
-  },
-  { 
-    name: 'Blue + Yellow',
-    colors: [{ hex: '#0000FF', amount: 1 }, { hex: '#FFFF00', amount: 1 }],
-    expected: 'Green-ish (subtractive)'
+    name: 'Red + Green',
+    colors: [{ hex: '#FF0000', amount: 100 }, { hex: '#00FF00', amount: 100 }],
+    expected: 'Yellow (additive)'
   },
   { 
     name: 'Red + Blue',
-    colors: [{ hex: '#FF0000', amount: 1 }, { hex: '#0000FF', amount: 1 }],
-    expected: 'Purple-ish'
+    colors: [{ hex: '#FF0000', amount: 100 }, { hex: '#0000FF', amount: 100 }],
+    expected: 'Magenta (additive)'
   },
   { 
-    name: 'All primaries',
+    name: 'Green + Blue',
+    colors: [{ hex: '#00FF00', amount: 100 }, { hex: '#0000FF', amount: 100 }],
+    expected: 'Cyan (additive)'
+  },
+  { 
+    name: 'All RGB primaries',
     colors: [
-      { hex: '#FF0000', amount: 1 }, 
-      { hex: '#00FF00', amount: 1 }, 
-      { hex: '#0000FF', amount: 1 }
+      { hex: '#FF0000', amount: 100 }, 
+      { hex: '#00FF00', amount: 100 }, 
+      { hex: '#0000FF', amount: 100 }
     ],
-    expected: 'Dark/muddy'
+    expected: 'White (additive)'
   },
   {
-    name: 'Cyan + Magenta',
-    colors: [{ hex: '#00FFFF', amount: 1 }, { hex: '#FF00FF', amount: 1 }],
-    expected: 'Blue-ish'
+    name: 'Red 100% only',
+    colors: [{ hex: '#FF0000', amount: 100 }],
+    expected: 'Pure Red'
+  },
+  {
+    name: 'Half Red',
+    colors: [{ hex: '#FF0000', amount: 50 }],
+    expected: 'Half-brightness Red'
   }
 ];
 
-console.log('\nMixing comparison:');
+console.log('\nRGB Additive mixing:');
 mixTests.forEach(test => {
-  const cmykResult = mixColorsSubtractive(test.colors, 'cmyk');
-  const kmResult = mixColorsSubtractive(test.colors, 'kubelka-munk');
-  console.log(`  ${test.name.padEnd(16)} → CMYK: ${cmykResult}  K-M: ${kmResult}  (expect: ${test.expected})`);
+  const result = mixColorsRGB(test.colors);
+  console.log(`  ${test.name.padEnd(20)} → ${result}  (expect: ${test.expected})`);
 });
 
 // ============================================================================
@@ -161,23 +165,34 @@ console.log('TEST 4: Edge Cases');
 console.log('='.repeat(60));
 
 // Empty mix
-const emptyMix = mixColorsSubtractive([]);
-console.log(`Empty mix: ${emptyMix} → ${emptyMix === '#808080' ? '✅ PASS' : '❌ FAIL'}`);
+const emptyMix = mixColorsRGB([]);
+console.log(`Empty mix: ${emptyMix} → ${emptyMix === '#000000' ? '✅ PASS (black)' : '❌ FAIL'}`);
 
 // Zero amounts
-const zeroMix = mixColorsSubtractive([{ hex: '#FF0000', amount: 0 }]);
-console.log(`Zero amounts: ${zeroMix} → ${zeroMix === '#808080' ? '✅ PASS' : '❌ FAIL'}`);
+const zeroMix = mixColorsRGB([{ hex: '#FF0000', amount: 0 }]);
+console.log(`Zero amounts: ${zeroMix} → ${zeroMix === '#000000' ? '✅ PASS (black)' : '❌ FAIL'}`);
 
-// Single color
-const singleMix = mixColorsSubtractive([{ hex: '#FF5500', amount: 5 }]);
-console.log(`Single color: ${singleMix} → ${singleMix.toUpperCase() === '#FF5500' ? '✅ PASS' : '⚠️ Got ' + singleMix}`);
+// Single color at full
+const singleMix = mixColorsRGB([{ hex: '#FF5500', amount: 100 }]);
+console.log(`Single color 100%: ${singleMix} → ${singleMix.toUpperCase() === '#FF5500' ? '✅ PASS' : '⚠️ Got ' + singleMix}`);
 
 // Unequal weights
-const weightedMix = mixColorsSubtractive([
-  { hex: '#FF0000', amount: 3 },
-  { hex: '#0000FF', amount: 1 }
+const weightedMix = mixColorsRGB([
+  { hex: '#FF0000', amount: 75 },
+  { hex: '#0000FF', amount: 25 }
 ]);
-console.log(`3:1 Red:Blue: ${weightedMix} (should be more red)`);
+console.log(`75% Red + 25% Blue: ${weightedMix} (should be magenta-ish, more red)`);
+
+// Color names test
+console.log('\n' + '='.repeat(60));
+console.log('TEST 5: Color Names');
+console.log('='.repeat(60));
+
+const sampleColors = dailyColors.slice(0, 5);
+console.log('\nSample color names:');
+sampleColors.forEach(c => {
+  console.log(`  ${c.hex} → "${c.name}"`);
+});
 
 console.log('\n' + '='.repeat(60));
 console.log('All tests completed!');

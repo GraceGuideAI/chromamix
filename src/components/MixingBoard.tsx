@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Share2, X, Clock, Zap, Target, Flame } from 'lucide-react';
 import useGameStore, { getScoreLabel, getScoreLabelColor, getTimeUntilNewDaily } from '@/store/gameStore';
 import { getColorName } from '@/utils/colorPhysics';
-import { getPTSColorName } from '@/data/ptsColors';
+import { getGameColorName } from '@/data/colors';
 import confetti from 'canvas-confetti';
 
 // Accessible slider component with enhanced tactile feedback
@@ -21,9 +21,6 @@ interface AccessibleSliderProps {
 function AccessibleSlider({ id, label, value, baseColor, onChange, disabled = false }: AccessibleSliderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  
-  // Check if this is the white slider (needs special styling)
-  const isWhiteSlider = baseColor.toUpperCase() === '#FFFFFF';
   
   // Generate descriptive value text for screen readers
   const getValueText = useCallback((val: number) => {
@@ -77,20 +74,26 @@ function AccessibleSlider({ id, label, value, baseColor, onChange, disabled = fa
 
   return (
     <div 
-      className={`slider-container bg-white/10 backdrop-blur-sm rounded-xl p-2 sm:p-3 space-y-1 transition-all duration-200 ${
-        isFocused ? 'ring-2 ring-white ring-offset-1 ring-offset-transparent' : ''
-      } ${isDragging ? 'scale-[1.01]' : ''} ${disabled ? 'opacity-50' : ''}`}
+      className={`slider-container bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 space-y-2 transition-all duration-200 ${
+        isFocused ? 'ring-2 ring-white ring-offset-2 ring-offset-transparent' : ''
+      } ${isDragging ? 'scale-[1.02] shadow-lg' : ''} ${disabled ? 'opacity-50' : ''}`}
     >
       <div className="flex justify-between items-center">
         <label 
           htmlFor={`slider-${id}`}
-          className="text-white font-semibold text-sm sm:text-base"
+          className="text-white font-semibold text-base sm:text-lg flex items-center gap-2"
         >
+          {/* Color indicator dot */}
+          <span 
+            className="w-4 h-4 rounded-full border-2 border-white/30 shadow-inner"
+            style={{ backgroundColor: baseColor }}
+            aria-hidden="true"
+          />
           {label}
         </label>
         <output 
           htmlFor={`slider-${id}`}
-          className="text-white/90 font-mono text-sm sm:text-base tabular-nums min-w-[4ch] text-right"
+          className="text-white/90 font-mono text-base sm:text-lg tabular-nums min-w-[4ch] text-right font-bold"
           aria-live="polite"
           aria-atomic="true"
         >
@@ -99,38 +102,35 @@ function AccessibleSlider({ id, label, value, baseColor, onChange, disabled = fa
       </div>
       
       {/* Visual track with enhanced feedback */}
-      <div className="relative slider-track-container">
-        {/* Background track - darker for white slider visibility */}
+      <div className="relative slider-track-container h-10 sm:h-12 flex items-center">
+        {/* Background track */}
         <div 
-          className={`absolute inset-0 rounded-full h-2 sm:h-3 ${
-            isWhiteSlider ? 'bg-gray-500/50' : 'bg-white/20'
-          }`}
+          className="absolute inset-x-0 rounded-full h-3 sm:h-4 bg-white/20"
           style={{ top: '50%', transform: 'translateY(-50%)' }}
           aria-hidden="true"
         />
         
-        {/* Filled portion - white slider gets border for visibility */}
-        <div 
-          className={`absolute h-2 sm:h-3 rounded-full transition-all duration-75 ${
-            isWhiteSlider ? 'border border-gray-400 sm:border-2' : ''
-          }`}
+        {/* Filled portion with glow effect */}
+        <motion.div 
+          className="absolute h-3 sm:h-4 rounded-full"
           style={{ 
             top: '50%',
             transform: 'translateY(-50%)',
             width: `${value}%`,
             backgroundColor: baseColor,
             boxShadow: isDragging 
-              ? isWhiteSlider 
-                ? '0 0 20px rgba(200, 200, 200, 0.8), inset 0 0 0 1px rgba(0,0,0,0.1)' 
-                : `0 0 20px ${baseColor}88`
-              : isWhiteSlider 
-                ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' 
+              ? `0 0 24px ${baseColor}aa, 0 0 48px ${baseColor}44`
+              : value > 0 
+                ? `0 0 12px ${baseColor}66`
                 : 'none'
           }}
+          initial={false}
+          animate={{ width: `${value}%` }}
+          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
           aria-hidden="true"
         />
         
-        {/* Actual input - tick marks removed for cleaner mobile UI */}
+        {/* Actual input - larger touch target */}
         <input
           id={`slider-${id}`}
           type="range"
@@ -147,8 +147,8 @@ function AccessibleSlider({ id, label, value, baseColor, onChange, disabled = fa
           onTouchStart={() => setIsDragging(true)}
           onTouchEnd={() => setIsDragging(false)}
           disabled={disabled}
-          className="slider-input relative z-10 w-full h-4 appearance-none bg-transparent cursor-pointer disabled:cursor-not-allowed"
-          aria-label={`${label} color amount`}
+          className="slider-input relative z-10 w-full h-10 sm:h-12 appearance-none bg-transparent cursor-pointer disabled:cursor-not-allowed touch-pan-y"
+          aria-label={`${label} color intensity`}
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={value}
@@ -204,10 +204,10 @@ export default function MixingBoard() {
     shareResults,
   } = useGameStore();
 
-  // Get the detected PTS color name for the user's mix
-  const mixColorName = getPTSColorName(currentMix);
+  // Get the closest color name for the user's mix
+  const mixColorName = getGameColorName(currentMix);
   
-  // Target color name from PTS catalog
+  // Target color info
   const targetColorName = targetColor.name;
   const targetColorHex = targetColor.hex;
 
@@ -393,9 +393,9 @@ export default function MixingBoard() {
 
   return (
     <div 
-      className="w-full max-w-4xl mx-auto px-3 sm:px-4 py-2 sm:py-4 space-y-2 sm:space-y-4 relative"
+      className="w-full max-w-4xl mx-auto px-3 sm:px-4 py-2 sm:py-4 space-y-3 sm:space-y-4 relative"
       role="main"
-      aria-label="Color mixing game board"
+      aria-label="RGB color mixing game board"
     >
       {/* Screen reader announcements */}
       <div
@@ -669,7 +669,7 @@ export default function MixingBoard() {
                 role="img"
                 aria-label={`Target color: ${targetColorName}`}
               >
-                {/* Premium PTS color name displayed on swatch */}
+                {/* Color name displayed on swatch */}
                 <motion.div 
                   key={targetColorName}
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -689,10 +689,6 @@ export default function MixingBoard() {
                   </div>
                 </motion.div>
               </div>
-              {/* Hex code shown below */}
-              <div className="text-center text-[10px] sm:text-xs font-mono text-white/40 tracking-wider">
-                {targetColorHex.toUpperCase()}
-              </div>
             </motion.div>
 
             {/* Color Mixing Canvas */}
@@ -711,7 +707,7 @@ export default function MixingBoard() {
               <div 
                 className="color-swatch relative w-full h-20 sm:h-28 md:h-32 rounded-xl overflow-hidden shadow-xl border-2 sm:border-4 border-white/20"
                 role="img"
-                aria-label={`Your mixed color: ${mixColorName}`}
+                aria-label="Your mixed color"
               >
                 <canvas
                   ref={canvasRef}
@@ -720,58 +716,27 @@ export default function MixingBoard() {
                   className="w-full h-full"
                   aria-hidden="true"
                 />
-                {/* Detected color name overlay */}
-                <div 
-                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                >
-                  <motion.div 
-                    key={mixColorName}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                    className="text-center px-2 py-1 rounded-md"
-                    style={{ 
-                      color: getContrastColor(currentMix),
-                      backgroundColor: `${getContrastColor(currentMix)}12`,
-                      textShadow: getContrastColor(currentMix) === '#ffffff' 
-                        ? '0 1px 4px rgba(0,0,0,0.6)' 
-                        : '0 1px 4px rgba(255,255,255,0.4)'
-                    }}
-                  >
-                    <div className="text-sm sm:text-lg md:text-xl font-bold tracking-wide leading-tight">
-                      {mixColorName}
-                    </div>
-                  </motion.div>
-                </div>
-              </div>
-              {/* Hex code shown below */}
-              <div 
-                className="text-center text-[10px] sm:text-xs font-mono text-white/40 tracking-wider"
-                aria-live="polite"
-                aria-atomic="true"
-              >
-                {currentMix.toUpperCase()}
               </div>
             </motion.div>
           </div>
 
-          {/* Color Sliders - Compact grid on mobile */}
+          {/* RGB Color Sliders */}
           <motion.fieldset
             initial={{ y: 10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className="space-y-1.5 sm:space-y-2 border-0 p-0 m-0"
+            className="space-y-2 sm:space-y-3 border-0 p-0 m-0"
           >
             <legend className="sr-only">
-              Color mixing sliders - adjust Red, Yellow, Blue, and White to match the target color
+              RGB color mixing sliders - adjust Red, Green, and Blue intensity to match the target color
             </legend>
             
             {sliders.map((slider, idx) => (
               <motion.div
                 key={slider.id}
-                initial={{ x: -10, opacity: 0 }}
+                initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.15 + idx * 0.05 }}
+                transition={{ delay: 0.15 + idx * 0.08, type: 'spring', stiffness: 300 }}
               >
                 <AccessibleSlider
                   id={slider.id}
@@ -847,7 +812,7 @@ export default function MixingBoard() {
                   whileTap={{ scale: 0.98 }}
                   onClick={handleSubmit}
                   className="game-button flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 px-4 rounded-xl shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-purple-900"
-                  aria-label="Check how well your mix matches the target color"
+                  aria-label="Check how well your RGB mix matches the target color"
                 >
                   Check Match
                 </motion.button>

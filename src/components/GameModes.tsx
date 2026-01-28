@@ -87,11 +87,11 @@ export default function GameModes() {
       title: 'Daily Target',
       description: dailyCompleted 
         ? `Completed! Score: ${dailyBestScore}` 
-        : 'Match today\'s Porsche PTS color',
+        : 'Match today\'s target color',
       icon: Calendar,
       gradient: 'from-blue-500 to-cyan-500',
       badge: dailyCompleted ? '✓' : null,
-      subtitle: `🚗 New PTS color in ${countdown.hours}h ${countdown.minutes}m`,
+      subtitle: `New color in ${countdown.hours}h ${countdown.minutes}m`,
       shortcut: '1',
     },
     {
@@ -99,7 +99,7 @@ export default function GameModes() {
       title: 'Rush Mode',
       description: rushHighScore > 0 
         ? `High Score: ${rushHighScore}` 
-        : '60 seconds to match PTS colors',
+        : '60 seconds to match colors',
       icon: Zap,
       gradient: 'from-orange-500 to-red-500',
       badge: null,

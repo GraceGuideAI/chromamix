@@ -1,22 +1,22 @@
 import chroma from 'chroma-js';
 import { 
-  getDailyPTSColor, 
-  getRandomPTSColor, 
-  type PTSColor 
-} from '@/data/ptsColors';
+  getDailyGameColor, 
+  getRandomGameColor, 
+  type GameColor 
+} from '@/data/colors';
 
-// Re-export PTSColor type for consumers
-export type { PTSColor };
+// Re-export GameColor type for consumers
+export type { GameColor };
 
 /**
- * ColorPhysics - Advanced color mixing and scoring for ChromaMix
+ * ColorPhysics - RGB Additive Color Mixing for ChromaMix
  * 
  * Features:
- * - Kubelka-Munk subtractive color mixing (paint-like)
- * - True Kubelka-Munk K/S theory (enhanced mode)
+ * - RGB additive color mixing (light-based)
+ * - Weighted average mixing with proper clamping
  * - CIEDE2000 color difference with tiered scoring
  * - Mulberry32 PRNG for deterministic daily colors
- * - Porsche PTS (Paint to Sample) color catalog integration
+ * - Custom color catalog integration
  */
 
 // ============================================================================
@@ -29,22 +29,8 @@ interface RGBColor {
   b: number;
 }
 
-interface CMYKColor {
-  c: number;
-  m: number;
-  y: number;
-  k: number;
-}
-
-interface KSCoefficients {
-  K: [number, number, number]; // Absorption coefficients (R, G, B)
-  S: [number, number, number]; // Scattering coefficients (R, G, B)
-}
-
-export type MixingMode = 'cmyk' | 'kubelka-munk';
-
 /**
- * Target color with name information (alias for PTSColor)
+ * Target color with name information
  */
 export interface TargetColor {
   hex: string;
@@ -81,228 +67,93 @@ function createDailyRNG(date: Date = new Date()): () => number {
 }
 
 // ============================================================================
-// Color Space Conversions
-// ============================================================================
-
-function rgbToCMYK(rgb: RGBColor): CMYKColor {
-  const r = rgb.r / 255;
-  const g = rgb.g / 255;
-  const b = rgb.b / 255;
-
-  const k = 1 - Math.max(r, g, b);
-  
-  if (k === 1) {
-    return { c: 0, m: 0, y: 0, k: 1 };
-  }
-
-  const c = (1 - r - k) / (1 - k);
-  const m = (1 - g - k) / (1 - k);
-  const y = (1 - b - k) / (1 - k);
-
-  return { c, m, y, k };
-}
-
-function cmykToRGB(cmyk: CMYKColor): RGBColor {
-  const r = 255 * (1 - cmyk.c) * (1 - cmyk.k);
-  const g = 255 * (1 - cmyk.m) * (1 - cmyk.k);
-  const b = 255 * (1 - cmyk.y) * (1 - cmyk.k);
-
-  return { 
-    r: Math.round(Math.max(0, Math.min(255, r))), 
-    g: Math.round(Math.max(0, Math.min(255, g))), 
-    b: Math.round(Math.max(0, Math.min(255, b))) 
-  };
-}
-
-// ============================================================================
-// Kubelka-Munk Theory - True Pigment Mixing
+// RGB Additive Color Mixing
 // ============================================================================
 
 /**
- * Convert reflectance to K/S ratio (Kubelka-Munk function)
- * K/S = (1 - R)² / (2R)
- */
-function reflectanceToKS(R: number): number {
-  // Clamp R to avoid division by zero and negative values
-  const r = Math.max(0.001, Math.min(0.999, R));
-  return Math.pow(1 - r, 2) / (2 * r);
-}
-
-/**
- * Convert K/S ratio back to reflectance
- * R = 1 + K/S - √((K/S)² + 2(K/S))
- */
-function ksToReflectance(ks: number): number {
-  const k = Math.max(0, ks);
-  return 1 + k - Math.sqrt(k * k + 2 * k);
-}
-
-/**
- * Convert RGB color to K/S coefficients
- * Approximates pigment absorption/scattering from color appearance
+ * Mix colors using RGB additive mixing (light-based)
  * 
- * Uses a modified K-M model tuned for game-friendly results:
- * - Higher base scattering prevents overly dark mixes
- * - Adjusted absorption curve maintains color vibrancy
- */
-function rgbToKS(rgb: RGBColor): KSCoefficients {
-  // Convert to reflectance (0-1 scale) with gamma correction
-  const gamma = 2.2;
-  const R = [
-    Math.pow(rgb.r / 255, gamma),
-    Math.pow(rgb.g / 255, gamma),
-    Math.pow(rgb.b / 255, gamma)
-  ] as [number, number, number];
-  
-  // Convert each channel to K/S with modified curve
-  // Use sqrt to reduce absorption aggressiveness
-  const KS = R.map(r => {
-    const clamped = Math.max(0.02, Math.min(0.98, r));
-    // Modified K/S function: gentler absorption for better mixing
-    return Math.pow(reflectanceToKS(clamped), 0.5);
-  }) as [number, number, number];
-  
-  // Variable scattering: brighter colors scatter more
-  const avgR = (R[0] + R[1] + R[2]) / 3;
-  const scatterFactor = 0.8 + avgR * 0.4; // Range: 0.8-1.2
-  
-  return {
-    K: KS,
-    S: [scatterFactor, scatterFactor, scatterFactor]
-  };
-}
-
-/**
- * Convert K/S coefficients back to RGB
- */
-function ksToRGB(ks: KSCoefficients): RGBColor {
-  // Calculate K/S ratio for each channel
-  const ratios = ks.K.map((k, i) => k / ks.S[i]);
-  
-  // Convert to reflectance with inverse of the modified curve
-  const R = ratios.map(r => {
-    // Inverse of the sqrt modification
-    const ksValue = r * r;
-    return ksToReflectance(ksValue);
-  });
-  
-  // Apply inverse gamma correction
-  const gamma = 2.2;
-  const invGamma = 1 / gamma;
-  
-  return {
-    r: Math.round(Math.max(0, Math.min(255, Math.pow(R[0], invGamma) * 255))),
-    g: Math.round(Math.max(0, Math.min(255, Math.pow(R[1], invGamma) * 255))),
-    b: Math.round(Math.max(0, Math.min(255, Math.pow(R[2], invGamma) * 255)))
-  };
-}
-
-/**
- * Mix colors using true Kubelka-Munk theory
- * Physically accurate pigment mixing simulation
+ * In additive mixing:
+ * - Red + Green = Yellow
+ * - Red + Blue = Magenta  
+ * - Green + Blue = Cyan
+ * - Red + Green + Blue = White
+ * - No light = Black
  * 
- * The key insight: K and S mix linearly by concentration
- * K_mix = Σ(c_i × K_i), S_mix = Σ(c_i × S_i)
+ * Uses weighted average with intensity normalization
  */
-export function mixColorsKubelkaMunk(
+export function mixColorsRGB(
   colors: { hex: string; amount: number }[]
 ): string {
   const totalAmount = colors.reduce((sum, c) => sum + c.amount, 0);
   
   if (totalAmount === 0) {
-    return '#808080';
+    return '#000000'; // No light = black
   }
 
-  const normalized = colors.map(c => ({
-    hex: c.hex,
-    concentration: c.amount / totalAmount
-  }));
-
-  // Convert all colors to K/S coefficients
-  const ksColors = normalized.map(c => {
-    const rgb = chroma(c.hex).rgb();
-    const ks = rgbToKS({ r: rgb[0], g: rgb[1], b: rgb[2] });
-    return { ks, concentration: c.concentration };
-  });
-
-  // Mix K and S coefficients linearly (Kubelka-Munk mixing rule)
-  const mixedKS: KSCoefficients = {
-    K: [0, 0, 0],
-    S: [0, 0, 0]
-  };
-
-  for (const { ks, concentration } of ksColors) {
-    for (let i = 0; i < 3; i++) {
-      mixedKS.K[i] += ks.K[i] * concentration;
-      mixedKS.S[i] += ks.S[i] * concentration;
-    }
-  }
-
-  // Convert back to RGB
-  const mixedRGB = ksToRGB(mixedKS);
+  // Convert hex colors to RGB and weight by amount
+  let mixedR = 0;
+  let mixedG = 0;
+  let mixedB = 0;
   
-  return chroma(mixedRGB.r, mixedRGB.g, mixedRGB.b).hex();
+  for (const { hex, amount } of colors) {
+    const rgb = chroma(hex).rgb();
+    const weight = amount / 100; // Normalize to 0-1
+    
+    // Add weighted RGB values (additive mixing)
+    mixedR += rgb[0] * weight;
+    mixedG += rgb[1] * weight;
+    mixedB += rgb[2] * weight;
+  }
+  
+  // Clamp values to valid RGB range
+  mixedR = Math.min(255, Math.max(0, Math.round(mixedR)));
+  mixedG = Math.min(255, Math.max(0, Math.round(mixedG)));
+  mixedB = Math.min(255, Math.max(0, Math.round(mixedB)));
+  
+  return chroma(mixedR, mixedG, mixedB).hex();
 }
 
-// ============================================================================
-// CMYK Subtractive Mixing (Simpler approximation)
-// ============================================================================
-
 /**
- * Mix colors using CMYK subtractive mixing
- * Good approximation for paint mixing, simpler than K-M
+ * Alternative RGB mixing with screen blend mode
+ * Creates lighter results, more like overlapping colored lights
+ * 
+ * Screen formula: 1 - (1 - A) * (1 - B)
  */
-export function mixColorsCMYK(
+export function mixColorsScreen(
   colors: { hex: string; amount: number }[]
 ): string {
   const totalAmount = colors.reduce((sum, c) => sum + c.amount, 0);
   
   if (totalAmount === 0) {
-    return '#808080';
+    return '#000000';
   }
 
-  const normalized = colors.map(c => ({
-    hex: c.hex,
-    weight: c.amount / totalAmount
-  }));
-
-  // Convert all colors to CMYK
-  const cmykColors = normalized.map(c => {
-    const rgb = chroma(c.hex).rgb();
-    const cmyk = rgbToCMYK({ r: rgb[0], g: rgb[1], b: rgb[2] });
-    return { cmyk, weight: c.weight };
-  });
-
-  // Weighted average in CMYK space
-  const mixedCMYK: CMYKColor = {
-    c: cmykColors.reduce((sum, c) => sum + c.cmyk.c * c.weight, 0),
-    m: cmykColors.reduce((sum, c) => sum + c.cmyk.m * c.weight, 0),
-    y: cmykColors.reduce((sum, c) => sum + c.cmyk.y * c.weight, 0),
-    k: cmykColors.reduce((sum, c) => sum + c.cmyk.k * c.weight, 0),
-  };
-
-  const mixedRGB = cmykToRGB(mixedCMYK);
+  // Start with black (no light)
+  let screenR = 0;
+  let screenG = 0;
+  let screenB = 0;
   
-  return chroma(mixedRGB.r, mixedRGB.g, mixedRGB.b).hex();
-}
-
-// ============================================================================
-// Unified Mixing API
-// ============================================================================
-
-/**
- * Mix colors using the specified mode
- * @param colors Array of colors with amounts
- * @param mode 'cmyk' (default, faster) or 'kubelka-munk' (more accurate)
- */
-export function mixColorsSubtractive(
-  colors: { hex: string; amount: number }[],
-  mode: MixingMode = 'cmyk'
-): string {
-  if (mode === 'kubelka-munk') {
-    return mixColorsKubelkaMunk(colors);
+  for (const { hex, amount } of colors) {
+    const rgb = chroma(hex).rgb();
+    const intensity = amount / 100;
+    
+    // Apply intensity to the color
+    const r = (rgb[0] / 255) * intensity;
+    const g = (rgb[1] / 255) * intensity;
+    const b = (rgb[2] / 255) * intensity;
+    
+    // Screen blend: 1 - (1 - existing) * (1 - new)
+    screenR = 1 - (1 - screenR) * (1 - r);
+    screenG = 1 - (1 - screenG) * (1 - g);
+    screenB = 1 - (1 - screenB) * (1 - b);
   }
-  return mixColorsCMYK(colors);
+  
+  return chroma(
+    Math.round(screenR * 255),
+    Math.round(screenG * 255),
+    Math.round(screenB * 255)
+  ).hex();
 }
 
 // ============================================================================
@@ -408,20 +259,19 @@ export function calculateSimpleScore(color1: string, color2: string): number {
 }
 
 // ============================================================================
-// Daily Color Generation (Porsche PTS Colors)
+// Daily Color Generation (Custom Colors)
 // ============================================================================
 
 /**
- * Generate daily target color using Porsche PTS colors
+ * Generate daily target color using game color palette
  * Same color for all players on the same day
- * @returns TargetColor with hex, name, and optional code
+ * @returns TargetColor with hex and name
  */
 export function getDailyTargetColor(date?: Date): TargetColor {
-  const ptsColor = getDailyPTSColor(date);
+  const gameColor = getDailyGameColor(date);
   return {
-    hex: ptsColor.hex,
-    name: ptsColor.name,
-    code: ptsColor.code,
+    hex: gameColor.hex,
+    name: gameColor.name,
   };
 }
 
@@ -458,15 +308,14 @@ export function getDailyColorInfo(date: Date = new Date()): {
 }
 
 /**
- * Generate a random target color from PTS catalog (for Rush mode)
- * @returns TargetColor with hex, name, and optional code
+ * Generate a random target color from game palette (for Rush mode)
+ * @returns TargetColor with hex and name
  */
 export function generateRandomColor(): TargetColor {
-  const ptsColor = getRandomPTSColor();
+  const gameColor = getRandomGameColor();
   return {
-    hex: ptsColor.hex,
-    name: ptsColor.name,
-    code: ptsColor.code,
+    hex: gameColor.hex,
+    name: gameColor.name,
   };
 }
 
@@ -524,35 +373,42 @@ export function getContrastingTextColor(bgHex: string): string {
 }
 
 /**
- * Check if a color is "achievable" through mixing the available palette
+ * Check if a color is "achievable" through mixing the available RGB palette
  * Useful for validating daily colors
  */
 export function isColorAchievable(
   targetHex: string,
-  palette: string[],
+  palette: string[] = ['#FF0000', '#00FF00', '#0000FF'],
   threshold: number = 15
 ): boolean {
   // Simple heuristic: check if target is within reasonable deltaE of any palette color
   // or could be mixed from palette colors
-  const targetLab = chroma(targetHex).lab();
   
-  // Check palette colors
+  // Check palette colors directly
   for (const colorHex of palette) {
     const deltaE = chroma.deltaE(targetHex, colorHex);
     if (deltaE < threshold) return true;
   }
   
-  // Check basic mixes (pairs)
+  // Check basic mixes (pairs at 50/50)
   for (let i = 0; i < palette.length; i++) {
     for (let j = i + 1; j < palette.length; j++) {
-      const mixed = mixColorsSubtractive([
-        { hex: palette[i], amount: 1 },
-        { hex: palette[j], amount: 1 }
+      const mixed = mixColorsRGB([
+        { hex: palette[i], amount: 50 },
+        { hex: palette[j], amount: 50 }
       ]);
       const deltaE = chroma.deltaE(targetHex, mixed);
       if (deltaE < threshold) return true;
     }
   }
+  
+  // Check all three at various ratios
+  const testMix = mixColorsRGB([
+    { hex: palette[0], amount: 33 },
+    { hex: palette[1], amount: 33 },
+    { hex: palette[2], amount: 33 }
+  ]);
+  if (chroma.deltaE(targetHex, testMix) < threshold) return true;
   
   return false;
 }
