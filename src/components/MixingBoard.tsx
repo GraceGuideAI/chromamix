@@ -322,11 +322,9 @@ export default function MixingBoard() {
         canvas.width / 2
       );
 
-      gradient.addColorStop(0, currentMix);
-      gradient.addColorStop(0.5, currentMix + '88');
-      gradient.addColorStop(1, currentMix + '44');
-
-      ctx.fillStyle = gradient;
+      // Use solid fill instead of gradient to show true mixed color
+      // (transparency was causing background bleed-through)
+      ctx.fillStyle = currentMix;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
   }, [currentMix]);

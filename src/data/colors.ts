@@ -169,16 +169,24 @@ function calculateAchievability(targetHex: string): {
   // Calculate CIEDE2000 difference
   const deltaE = chroma.deltaE(targetHex, mixedHex);
   
-  // Convert deltaE to score using our scoring curve
+  // Convert deltaE to score using improved scoring curve
+  // (Must match the curve in colorPhysics.ts)
   let score: number;
-  if (deltaE <= 0.5) {
+  if (deltaE <= 1) {
+    // Perfect match zone: 98-100
     score = 100 - (deltaE * 2);
   } else if (deltaE <= 2) {
-    score = 99 - ((deltaE - 0.5) * 2.67);
+    // Near-perfect zone: 96-98
+    score = 98 - ((deltaE - 1) * 2);
   } else if (deltaE <= 5) {
-    score = 95 - ((deltaE - 2) * 3.33);
+    // Excellent zone: 90-96 (ΔE 5 → 90)
+    score = 96 - ((deltaE - 2) * 2);
+  } else if (deltaE <= 10) {
+    // Great zone: 75-90
+    score = 90 - ((deltaE - 5) * 3);
   } else {
-    score = 85 - ((deltaE - 5) * 3);
+    // Good and below
+    score = 75 - ((deltaE - 10) * 2.5);
   }
   
   score = Math.max(0, Math.min(100, score));

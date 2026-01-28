@@ -201,7 +201,7 @@ export function mixColorsScreen(
  * - 100: Colors are exact opposites
  */
 export const SCORE_TIERS = {
-  PERFECT: { minScore: 95, maxDeltaE: 2, label: '🎯 Perfect!', stars: 5 },
+  PERFECT: { minScore: 97, maxDeltaE: 1.5, label: '🎯 Perfect!', stars: 5 },
   EXCELLENT: { minScore: 85, maxDeltaE: 5, label: '⭐ Excellent!', stars: 4 },
   GREAT: { minScore: 70, maxDeltaE: 10, label: '👍 Great!', stars: 3 },
   GOOD: { minScore: 50, maxDeltaE: 20, label: '👌 Good', stars: 2 },
@@ -251,31 +251,35 @@ export function calculateColorScore(color1: string, color2: string): ColorScoreR
       else dominantDiff = 'blue';
     }
     
-    // IMPROVED SCORING CURVE
-    // Uses a smoother, more intuitive mapping from deltaE to score
-    // Perfect match (deltaE ≈ 0) = 100
-    // Imperceptible (deltaE ≤ 1) = 98-100
-    // Very close (deltaE ≤ 5) = 85-98
-    // Close (deltaE ≤ 15) = 50-85
-    // Different (deltaE > 15) = 0-50
+    // IMPROVED SCORING CURVE (Updated based on player perception research)
+    // More forgiving curve that better matches human color perception
+    // Key insight: ΔE 5 should score 90+ as it's "noticeable but clearly related"
+    // 
+    // CIEDE2000 deltaE interpretation:
+    // - 0-1: Not perceptible by human eye
+    // - 1-2: Perceptible through close observation  
+    // - 2-5: Perceptible at a glance but colors clearly related
+    // - 5-10: Noticeable difference, colors still similar
+    // - 10+: Clearly different colors
     
     let score: number;
     
-    if (deltaE <= 0.5) {
-      // Perfect match zone: 99-100
+    if (deltaE <= 1) {
+      // Perfect match zone: 98-100 (imperceptible to human eye)
       score = 100 - (deltaE * 2);
     } else if (deltaE <= 2) {
-      // Near-perfect zone: 95-99 (imperceptible difference)
-      score = 99 - ((deltaE - 0.5) * 2.67);
+      // Near-perfect zone: 96-98 (only visible on close inspection)
+      score = 98 - ((deltaE - 1) * 2);
     } else if (deltaE <= 5) {
-      // Excellent zone: 85-95 (barely perceptible)
-      score = 95 - ((deltaE - 2) * 3.33);
+      // Excellent zone: 90-96 (perceptible but clearly related)
+      // Research: ΔE 5 should score 90+
+      score = 96 - ((deltaE - 2) * 2);
     } else if (deltaE <= 10) {
-      // Great zone: 70-85 (noticeable but close)
-      score = 85 - ((deltaE - 5) * 3);
+      // Great zone: 75-90 (noticeable but still similar)
+      score = 90 - ((deltaE - 5) * 3);
     } else if (deltaE <= 20) {
-      // Good zone: 50-70 (clearly different but similar)
-      score = 70 - ((deltaE - 10) * 2);
+      // Good zone: 50-75 (clearly different but in same family)
+      score = 75 - ((deltaE - 10) * 2.5);
     } else if (deltaE <= 35) {
       // Close zone: 25-50 (different colors)
       score = 50 - ((deltaE - 20) * 1.67);
@@ -290,7 +294,7 @@ export function calculateColorScore(color1: string, color2: string): ColorScoreR
     // Ensure score is in valid range
     score = Math.max(0, Math.min(100, score));
     
-    // Determine tier
+    // Determine tier based on score thresholds
     let tier: ScoreTier;
     if (score >= SCORE_TIERS.PERFECT.minScore) tier = 'PERFECT';
     else if (score >= SCORE_TIERS.EXCELLENT.minScore) tier = 'EXCELLENT';

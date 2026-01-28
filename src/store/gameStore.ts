@@ -42,8 +42,8 @@ export interface Achievement {
 
 export const ACHIEVEMENTS: Omit<Achievement, 'unlocked' | 'unlockedAt'>[] = [
   { id: 'first_match', name: 'First Steps', description: 'Submit your first color mix', icon: '🎨' },
-  { id: 'perfect_match', name: 'Perfect Eye', description: 'Score 95 or higher', icon: '👁️' },
-  { id: 'great_match', name: 'Color Savant', description: 'Score 90 or higher', icon: '✨' },
+  { id: 'perfect_match', name: 'Perfect Eye', description: 'Score 97 or higher (perfect match!)', icon: '👁️' },
+  { id: 'great_match', name: 'Color Savant', description: 'Score 85 or higher (excellent match)', icon: '✨' },
   { id: 'streak_3', name: 'On Fire', description: 'Get a 3-day streak', icon: '🔥' },
   { id: 'streak_7', name: 'Dedicated Artist', description: 'Get a 7-day streak', icon: '🏆' },
   { id: 'streak_30', name: 'Master Mixer', description: 'Get a 30-day streak', icon: '👑' },
@@ -55,21 +55,23 @@ export const ACHIEVEMENTS: Omit<Achievement, 'unlocked' | 'unlockedAt'>[] = [
   { id: 'daily_complete', name: 'Daily Devotee', description: 'Complete a daily challenge', icon: '📅' },
 ];
 
-// Score threshold labels
-export type ScoreLabel = 'PERFECT!' | 'Great!' | 'Good' | 'Try again';
+// Score threshold labels (aligned with SCORE_TIERS in colorPhysics.ts)
+export type ScoreLabel = 'PERFECT!' | 'Excellent!' | 'Great!' | 'Good' | 'Try again';
 
 export function getScoreLabel(score: number): ScoreLabel {
-  if (score >= 95) return 'PERFECT!';
-  if (score >= 80) return 'Great!';
-  if (score >= 60) return 'Good';
+  if (score >= 97) return 'PERFECT!';
+  if (score >= 85) return 'Excellent!';
+  if (score >= 70) return 'Great!';
+  if (score >= 50) return 'Good';
   return 'Try again';
 }
 
 export function getScoreLabelColor(label: ScoreLabel): string {
   switch (label) {
     case 'PERFECT!': return 'from-yellow-400 to-amber-500';
-    case 'Great!': return 'from-green-400 to-emerald-500';
-    case 'Good': return 'from-blue-400 to-cyan-500';
+    case 'Excellent!': return 'from-green-400 to-emerald-500';
+    case 'Great!': return 'from-teal-400 to-cyan-500';
+    case 'Good': return 'from-blue-400 to-indigo-500';
     case 'Try again': return 'from-gray-400 to-gray-500';
   }
 }
@@ -489,11 +491,11 @@ const useGameStore = create<GameState>((set, get) => ({
     // First match achievement
     unlockAchievement('first_match');
     
-    // Score-based achievements
-    if (score >= 95) {
+    // Score-based achievements (aligned with new tier thresholds)
+    if (score >= 97) {
       unlockAchievement('perfect_match');
     }
-    if (score >= 90) {
+    if (score >= 85) {
       unlockAchievement('great_match');
     }
     
